@@ -1,7 +1,9 @@
 # Link make.inc with the targeted architecture in Arch directory
 # For example : ln -s make_sp6 make.inc
 #--------------------------------------
-include ../../../Arch/make.inc
+
+#don't forget to load the correct modules first!
+include ../../../Arch/make_intel
 
 # Sources directories
 #--------------------
