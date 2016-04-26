@@ -1,4 +1,4 @@
-This namelist contains various input parameters for HYDRO runs
+!This namelist contains various input parameters for HYDRO runs
 
 &RUN
 nstepmax=10000
