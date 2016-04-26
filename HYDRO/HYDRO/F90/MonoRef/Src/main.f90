@@ -13,15 +13,16 @@ program hydro_main
   integer(kind=prec_int) :: nbp_init, nbp_final, nbp_max, freq_p,i,j
 
   ! Initialize clock counter
-  call system_clock(count_rate=freq_p, count_max=nbp_max)
+  ! system_clock and cpu_time are itrinistic fortran subroutines.
+  call system_clock(count_rate=freq_p, count_max=nbp_max) 
   call system_clock(nbp_init)
   call cpu_time(t_deb)
 
   ! Read run parameters
-  call read_params
+  call read_params ! is in module_hydro_IO.f90
 
   ! Initialize hydro grid
-  call init_hydro
+  call init_hydro ! from module_hydro_principal.f90
 
   print *
   print *,' Starting time integration, nx = ',nx,' ny = ',ny  
@@ -32,18 +33,18 @@ program hydro_main
 
      ! Output results
      if( on_output .and. MOD(nstep,noutput)==0)then
-        call output
+        call output ! module_hydro_IO.f90
      end if
 
      ! Compute new time-step
      if(MOD(nstep,2)==0)then
-        call cmpdt(dt)
+        call cmpdt(dt) ! module_hydro_principal.f90
         if(nstep==0)dt=dt/2.
      endif
 
      ! Directional splitting
      if(MOD(nstep,2)==0)then
-        call godunov(1,dt)
+        call godunov(1,dt) !module_hydro_principal.f90
         call godunov(2,dt)
      else
         call godunov(2,dt)
@@ -57,7 +58,8 @@ program hydro_main
   end do
 
   ! Final output
-  if (on_output) call output
+  if (on_output) call output ! module_hydro_IO.f90
+
 
   ! Timing
   call cpu_time(t_fin)
