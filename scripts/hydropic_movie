@@ -1,4 +1,7 @@
-#!/usr/bin/python
+#!/users/biernack/Enthought/Canopy_64bit/User/bin/python 
+# ^ for python on dora/ela
+
+#/usr/bin/python # use this as shebang if on local machine
 
 #    ffmpeg -f image2 -r 2 -pattern_type glob -i '*.png' -r 60 output.mp4
 
@@ -43,9 +46,9 @@ fig.colorbar(im, fraction=0.046, pad=0.04)
 workdir = str(getcwd())
 
 if (path.exists(workdir+'/picoutput')) : # create a new dir "picoutput" if it doesnt already exist
-    print "found dir"
+    print "directory picoutput already exists. Good."
 else:
-    print "no dir"
+    print "creating new directory picoutput"
     mkdir("picoutput")
 
 outputfilename = 'picoutput/'+map_file
