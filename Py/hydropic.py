@@ -1,13 +1,20 @@
+#!/usr/bin/python
+
 import fortranfile
 import numpy
-from matplotlib import pyplot
+from os import getcwd #get currend work dir
 from sys import argv # command line arguments
+from matplotlib import use
+use('Agg') #don't show anything unless I ask you to. So no need to get graphical all over ssh.
+from matplotlib import pyplot
+
 
 map_file = str(argv[1])
-print map_file
+print "input file is: ", map_file
 #map_file = '/scratch/daint/biernack/hpc1b/jet/output_00010.00000'
 
 # read image data
+print "reading image file"
 f = fortranfile.FortranFile(map_file)
 [t, gamma] = f.readReals()
 [nx,ny,nvar,nstep] = f.readInts()
@@ -17,9 +24,20 @@ f.close()
 dat = numpy.array(dat)
 dat = dat.reshape(nvar,ny,nx)
 
-fig = pyplot.figure()
+fig = pyplot.figure(facecolor='black')
 ax = fig.add_subplot(1,1,1)
 
+print "plotting"
 ax.imshow(dat[0,:,:],interpolation='nearest')
 
-#pyplot.show()
+workdir = str(getcwd())
+outputfilename = map_file
+extension = 'pdf'
+fig_path = workdir+'/'+outputfilename+'.'+extension
+
+print "saving ", fig_path
+pyplot.savefig(fig_path, format=extension, facecolor=fig.get_facecolor(), transparent=True, dpi=100)
+pyplot.close()
+
+print "done"
+
