@@ -171,6 +171,11 @@ end subroutine constoprim
 
 
 subroutine eos(rho,eint,p,c)
+! equation of state
+! reads in density, initial energy;
+! gives out: pressure, speed of sound.
+! The speed of sound shouldn't be larger than your cell size 
+! => that's why we're computing the next timestep.
   use hydro_const
   use hydro_parameters
   implicit none

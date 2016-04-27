@@ -28,6 +28,11 @@ subroutine init_hydro
 
   ! Initial conditions in grid interior
   ! Warning: conservative variables U = (rho, rhou, rhov, E)
+  ! rho: density
+  ! rhov: density * velocity_v
+  ! rhou: density * velocity_u
+  ! E: Energy (temperature, pressure...)
+
 
 !!$  ! Jet
 !!$  do j=jmin+2,jmax-2
@@ -40,6 +45,7 @@ subroutine init_hydro
 !!$  end do
 
   ! Wind tunnel with point explosion
+  ! Initiating array uold except the border 
   do j=jmin+2,jmax-2
      do i=imin+2,imax-2
         uold(i,j,ID)=1.0
@@ -48,6 +54,7 @@ subroutine init_hydro
         uold(i,j,IP)=1.d-5
      end do
   end do
+  ! initiating primary "bang"
   uold(imin+2,jmin+2,IP)=1./dx/dx
 
 !!$  ! 1D Sod test
@@ -92,15 +99,18 @@ subroutine cmpdt(dt)
 
   do j=jmin+2,jmax-2
      do i=1,nx
-        q(i,ID) = max(uold(i+2,j,ID),smallr)
-        q(i,IU) = uold(i+2,j,IU)/q(i,ID)
+        q(i,ID) = max(uold(i+2,j,ID),smallr) ! take the bigger of the two -> so that the density doesn't surpass a minimal value "smallr"
+        q(i,IU) = uold(i+2,j,IU)/q(i,ID) !calculate velocities: rho*v/rho
         q(i,IV) = uold(i+2,j,IV)/q(i,ID)
-        eken = half*(q(i,IU)**2+q(i,IV)**2)
+        eken = half*(q(i,IU)**2+q(i,IV)**2) ! calcualte kinetic energy
         q(i,IP) = uold(i+2,j,IP)/q(i,ID) - eken
         e(i)=q(i,IP)
      end do
 
      call eos(q(1:nx,ID),e,q(1:nx,IP),c)
+     ! calculate pressure and speed of sound with equation of state.
+     ! then calculate the time step according to the speed of sound
+     ! so that the maximal movement is not larger than one cell.
 
      cournox=max(cournox,maxval(c(1:nx)+abs(q(1:nx,IU))))
      cournoy=max(cournoy,maxval(c(1:nx)+abs(q(1:nx,IV))))
@@ -108,7 +118,8 @@ subroutine cmpdt(dt)
 
   deallocate(q,e,c)
 
-  dt = courant_factor*dx/max(cournox,cournoy,smallc)
+  dt = courant_factor*dx/max(cournox,cournoy,smallc) 
+  !compute the actual minimal timestep.
 end subroutine cmpdt
 
 
@@ -121,7 +132,7 @@ subroutine godunov(idim,dt)
   implicit none
 
   ! Dummy arguments
-  integer(kind=prec_int), intent(in) :: idim
+  integer(kind=prec_int), intent(in) :: idim !in which dimensin (x or y) x= 1, y = 2
   real(kind=prec_real),   intent(in) :: dt
   ! Local variables
   integer(kind=prec_int) :: i,j,in
@@ -173,6 +184,7 @@ subroutine godunov(idim,dt)
                      ushock,frac,scr,delp,pold,ind,ind2)
 
         ! Compute fluxes
+        ! based of the results of riemann()
         call cmpflx(qgdnv,flux)
  
         ! Update conservative variables 
