@@ -37,7 +37,8 @@ fig = pyplot.figure(facecolor='white')
 ax = fig.add_subplot(1,1,1)
 
 print "plotting"
-ax.imshow(dat[0,:,:],interpolation='nearest')
+im=ax.imshow(dat[0,:,:],interpolation='nearest')
+fig.colorbar(im, fraction=0.046, pad=0.04)
 
 workdir = str(getcwd())
 
