@@ -1,5 +1,13 @@
 #!/usr/bin/python
 
+
+
+# A script to create an image of a HYDRO output file.
+# use with: hydropic.py output_000XXX.XXXX
+# creates a .pdf file with the same name in the same directory.
+
+
+
 import fortranfile
 import numpy
 from os import getcwd #get currend work dir
