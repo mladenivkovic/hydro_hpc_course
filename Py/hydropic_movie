@@ -1,0 +1,59 @@
+#!/usr/bin/python
+
+#    ffmpeg -f image2 -r 2 -pattern_type glob -i '*.png' -r 60 output.mp4
+
+
+# A script to create an image of a HYDRO output file.
+# To be used via a bash script.
+# creates a .pdf file with the same name in the same directory.
+
+
+
+import fortranfile
+import numpy
+from os import getcwd, path, mkdir #get currend work dir, check if dir exists, make new dir
+from sys import argv # command line arguments
+from matplotlib import use
+use('Agg') #don't show anything unless I ask you to. So no need to get graphical all over ssh.
+from matplotlib import pyplot
+
+
+map_file = str(argv[1])
+print "input file is: ", map_file
+#map_file = '/scratch/daint/biernack/hpc1b/jet/output_00010.00000'
+
+# read image data
+print "reading image file"
+f = fortranfile.FortranFile(map_file)
+[t, gamma] = f.readReals()
+[nx,ny,nvar,nstep] = f.readInts()
+dat = f.readReals()
+f.close()
+
+dat = numpy.array(dat)
+dat = dat.reshape(nvar,ny,nx)
+
+fig = pyplot.figure(facecolor='white')
+ax = fig.add_subplot(1,1,1)
+
+print "plotting"
+ax.imshow(dat[0,:,:],interpolation='nearest')
+
+workdir = str(getcwd())
+
+if (path.exists(workdir+'/picoutput')) : # create a new dir "picoutput" if it doesnt already exist
+    print "found dir"
+else:
+    print "no dir"
+    mkdir("picoutput")
+
+outputfilename = 'picoutput/'+map_file
+extension = 'png'
+fig_path = workdir+'/'+outputfilename+'.'+extension
+
+print "saving ", fig_path
+pyplot.savefig(fig_path, format=extension, facecolor=fig.get_facecolor(), transparent=True, dpi=100)
+pyplot.close()
+
+print "done"
+
