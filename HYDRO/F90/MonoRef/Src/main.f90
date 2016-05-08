@@ -7,6 +7,7 @@ program hydro_main
   use hydro_parameters
   use hydro_IO
   use hydro_principal
+  use mladen
   implicit none
 
   real(kind=prec_real)   :: dt, tps_elapsed, tps_cpu, t_deb, t_fin
@@ -20,6 +21,10 @@ program hydro_main
 
   ! Read run parameters
   call read_params ! is in module_hydro_IO.f90
+
+  ! Call my own subroutine
+  call writetoscreen('It works!')
+
 
   ! Initialize hydro grid
   call init_hydro ! from module_hydro_principal.f90
