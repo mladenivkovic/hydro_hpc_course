@@ -1,0 +1,6 @@
+# what git should ignore
+
+output_*
+*.png
+*.mp4
+hydro_mono
