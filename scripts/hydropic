@@ -1,4 +1,8 @@
-#!/users/biernack/Enthought/Canopy_64bit/User/bin/python 
+#!/home/ics/volker/Anaconda/bin/python
+# ^ for pyhton on zbox
+
+#/users/biernack/Enthought/Canopy_64bit/User/bin/python 
+
 # ^ for python on dora/ela
 
 #/usr/bin/python # use this as shebang if on local machine
