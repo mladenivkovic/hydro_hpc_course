@@ -4,15 +4,23 @@
 # execute in the directory where the outputs are
 
 
+#check if subdir "picoutput" exists. if not, create it.
+
+if [ -d "picoutput" ]; then
+    echo "Directory picoutput already exists."
+else
+    mkdir -p picoutput
+    echo "made new dir picoutput"
+fi
+
 for i in output_*; do
     hydropic_movie $i
 done
 
 cd picoutput
-ffmpeg -f image2 -r 2 -pattern_type glob -i '*.png' -r 100 ../movie.mp4
+ffmpeg -f image2 -r 10 -pattern_type glob -i '*.png' -r 25 ../movie.mp4
 
 cd ..
 
 echo "done"
-
 

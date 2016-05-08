@@ -43,16 +43,11 @@ fig = pyplot.figure(facecolor='white')
 ax = fig.add_subplot(1,1,1)
 
 print "plotting"
-im=ax.imshow(dat[0,:,:],interpolation='nearest')
+im=ax.imshow(dat[0,:,:],interpolation='none', vmin=0.0, vmax=10.0)
 fig.colorbar(im, fraction=0.046, pad=0.04)
 
 workdir = str(getcwd())
 
-if (path.exists(workdir+'/picoutput')) : # create a new dir "picoutput" if it doesnt already exist
-    print "directory picoutput already exists. Good."
-else:
-    print "creating new directory picoutput"
-    mkdir("picoutput")
 
 outputfilename = 'picoutput/'+map_file
 extension = 'png'
