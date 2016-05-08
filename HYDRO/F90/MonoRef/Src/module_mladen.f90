@@ -4,6 +4,7 @@ module mladen
 contains 
 
 subroutine writetoscreen(message)
+    ! will be modified for myid=1 ...
     implicit none
     character(len=*), intent(in), optional :: message
 
@@ -28,5 +29,17 @@ subroutine writetoscreen(message)
 
 end subroutine writetoscreen
 
+
+subroutine makedir(dirname)
+!create a directory.
+    implicit none
+    character(20), intent(in) :: dirname
+    character(30) :: cmnd
+
+    cmnd = 'mkdir -p '//TRIM(dirname)
+    call system(cmnd)
+    
+    call writetoscreen('created directory'//TRIM(dirname))
+end subroutine makedir
 
 end module mladen
