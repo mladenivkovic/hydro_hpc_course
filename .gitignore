@@ -8,3 +8,5 @@ hydro_mono
 *.o
 *.mod
 hydro_mpi
+run*.log
+slurm*.out
