@@ -29,8 +29,8 @@ subroutine read_params
 
   narg = iargc()
   IF(narg .NE. 1)THEN
-     write(*,*)'You should type: a.out input.nml'
-     write(*,*)'File input.nml should contain a parameter namelist'
+     call writetoscreen('You should type: a.out input.nml')
+     call writetoscreen('File input.nml should contain a parameter namelist')
      STOP
   END IF
   CALL getarg(1,infile)
@@ -56,12 +56,14 @@ end subroutine read_params
 subroutine output
   use hydro_commons
   use hydro_parameters
+  use mladen
   implicit none
 
   ! Local variables
   character(LEN=80) :: filename
   character(LEN=5)  :: char,charpe
   integer(kind=prec_int) :: nout,MYPE=0
+  character(len=100) :: message
 
   nout=nstep/noutput
   call title(nout,char)
@@ -69,7 +71,8 @@ subroutine output
   filename='hydro_output/output_'//TRIM(char)//'.'//TRIM(charpe)
   open(10,file=filename,form='unformatted')
   rewind(10)
-  print*,'Outputting array of size=',nx,ny,nvar
+  write(message, *) 'Outputting array of size=',nx,ny,nvar
+  call writetoscreen(TRIM(message))
   write(10)real(t,kind=prec_output),real(gamma,kind=prec_output)
   write(10)nx,ny,nvar,nstep
   write(10)real(uold(imin+2:imax-2,jmin+2:jmax-2,1:nvar),kind=prec_output)
