@@ -48,9 +48,6 @@ subroutine read_params
   myid = myid+1
 
 
-  write(message, '(A, I2, A, I2, A)') "Hello from proc ", myid, " from ", nproc, "processors in total." 
-  call writetoscreen(message)
-
   !other init stuff
   call makedir('hydro_output')
 end subroutine read_params

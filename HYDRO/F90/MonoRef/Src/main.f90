@@ -23,17 +23,13 @@ program hydro_main
   ! Read run parameters
   call read_params ! is in module_hydro_IO.f90, initialise MPI
 
-  ! Call my own subroutine
-  !call writetoscreen('It works!')
-
 
   ! Initialize hydro grid
   call init_hydro ! from module_hydro_principal.f90
 
-  print *
+  call writetoscreen(' ')
   print *,' Starting time integration, nx = ',nx,' ny = ',ny  
-  print *
-
+  call writetoscreen(' ')
   ! Main time loop
 !  do while (t < tend .and. nstep < nstepmax)
 
