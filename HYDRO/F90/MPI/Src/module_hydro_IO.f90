@@ -29,8 +29,8 @@ subroutine read_params
 
   narg = iargc()
   IF(narg .NE. 1)THEN
-     call writetoscreen('You should type: a.out input.nml')
-     call writetoscreen('File input.nml should contain a parameter namelist')
+     call writetoscreen(' You should type: a.out input.nml')
+     call writetoscreen(' File input.nml should contain a parameter namelist')
      STOP
   END IF
   CALL getarg(1,infile)
@@ -62,12 +62,12 @@ subroutine output
   ! Local variables
   character(LEN=80) :: filename
   character(LEN=5)  :: char,charpe
-  integer(kind=prec_int) :: nout,MYPE=0
+  integer(kind=prec_int) :: nout
   character(len=100) :: message
 
   nout=nstep/noutput
   call title(nout,char)
-  call title(MYPE,charpe)
+  call title(myid,charpe)
   filename='hydro_output/output_'//TRIM(char)//'.'//TRIM(charpe)
   open(10,file=filename,form='unformatted')
   rewind(10)

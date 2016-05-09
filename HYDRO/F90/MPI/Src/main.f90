@@ -15,6 +15,13 @@ program hydro_main
   integer(kind=prec_int) :: nbp_init, nbp_final, nbp_max, freq_p,i,j
   character(len=100) :: message, c
 
+
+
+
+  call writetoscreen('##########################################')
+  call writetoscreen('###             HYDRO CODE             ###')
+  call writetoscreen('##########################################')
+
   ! Initialize clock counter
   ! system_clock and cpu_time are itrinistic fortran subroutines.
   call system_clock(count_rate=freq_p, count_max=nbp_max) 
@@ -27,8 +34,9 @@ program hydro_main
   ! Initialize hydro grid
   call init_hydro ! from module_hydro_principal.f90
 
+
   call writetoscreen(' ')
-  write(message, *) ' Starting time integration, nx = ',nx,' ny = ',ny  
+  write(message, *) 'Starting time integration, nx = ',nx,' ny = ',ny  
   call writetoscreen(TRIM(message))
   call writetoscreen(' ')
   ! Main time loop
@@ -56,7 +64,7 @@ program hydro_main
 
      nstep=nstep+1
      t=t+dt
-     write(message,'("step=",I6," t=",1pe10.3," dt=",1pe10.3)')nstep,t,dt
+     write(message, '(" step= ",I6,"   t= ",1pe10.3,"   dt=",1pe10.3)')nstep,t,dt
      call writetoscreen(message)
 
   end do
