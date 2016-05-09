@@ -1,0 +1,11 @@
+#!/bin/bash
+#SBATCH -n 8 -t 00:10:00
+#SBATCH -p debug
+#SBATCH --job-name='hydro'
+
+
+export DATE=`date +%F_%Hh%M`
+
+srun -n 8 ./ramses3d-mladen clumpfindtesting.nml > run$DATE.log
+
+#SBATCH --mem=64000
