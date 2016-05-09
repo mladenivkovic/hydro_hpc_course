@@ -11,6 +11,7 @@ contains
 
 subroutine read_params
   use hydro_parameters
+  use mladen
   implicit none
 
   ! Local variables
@@ -36,6 +37,10 @@ subroutine read_params
   read(1,NML=mesh)
   read(1,NML=hydro)
   close(1)
+  
+
+  !other init stuff
+  call makedir('hydro_output')
 end subroutine read_params
 
 
@@ -52,7 +57,7 @@ subroutine output
   nout=nstep/noutput
   call title(nout,char)
   call title(MYPE,charpe)
-  filename='output_'//TRIM(char)//'.'//TRIM(charpe)
+  filename='hydro_output/output_'//TRIM(char)//'.'//TRIM(charpe)
   open(10,file=filename,form='unformatted')
   rewind(10)
   print*,'Outputting array of size=',nx,ny,nvar

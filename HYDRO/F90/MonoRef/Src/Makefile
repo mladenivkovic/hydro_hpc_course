@@ -54,7 +54,7 @@ main.o : main.f90 module_hydro_principal.o module_hydro_IO.o module_hydro_commun
 
 module_hydro_commun.o : module_hydro_commun.f90
 
-module_hydro_IO.o : module_hydro_IO.f90 module_hydro_commun.o
+module_hydro_IO.o : module_hydro_IO.f90 module_hydro_commun.o module_mladen.o
 
 module_hydro_principal.o : module_hydro_principal.f90 module_hydro_commun.o module_hydro_utils.o
 

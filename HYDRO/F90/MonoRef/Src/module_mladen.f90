@@ -33,13 +33,16 @@ end subroutine writetoscreen
 subroutine makedir(dirname)
 !create a directory.
     implicit none
-    character(20), intent(in) :: dirname
+    character(len=*), intent(in) :: dirname
     character(30) :: cmnd
 
     cmnd = 'mkdir -p '//TRIM(dirname)
     call system(cmnd)
     
-    call writetoscreen('created directory'//TRIM(dirname))
+    call writetoscreen('created directory '//TRIM(dirname))
 end subroutine makedir
+
+
+
 
 end module mladen
