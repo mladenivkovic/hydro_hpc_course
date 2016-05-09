@@ -35,47 +35,47 @@ program hydro_main
   print *
 
   ! Main time loop
-  do while (t < tend .and. nstep < nstepmax)
+!  do while (t < tend .and. nstep < nstepmax)
 
-     ! Output results
-     if( on_output .and. MOD(nstep,noutput)==0)then
-        call output ! module_hydro_IO.f90
-     end if
+!     ! Output results
+!     if( on_output .and. MOD(nstep,noutput)==0)then
+!        call output ! module_hydro_IO.f90
+!     end if
 
-     ! Compute new time-step
-     if(MOD(nstep,2)==0)then
-        call cmpdt(dt) ! module_hydro_principal.f90
-        if(nstep==0)dt=dt/2.
-     endif
+!     ! Compute new time-step
+!     if(MOD(nstep,2)==0)then
+!        call cmpdt(dt) ! module_hydro_principal.f90
+!        if(nstep==0)dt=dt/2.
+!     endif
 
      ! Directional splitting
-     if(MOD(nstep,2)==0)then
-        call godunov(1,dt) !module_hydro_principal.f90
-        call godunov(2,dt)
-     else
-        call godunov(2,dt)
-        call godunov(1,dt)
-     end if
+!     if(MOD(nstep,2)==0)then
+!        call godunov(1,dt) !module_hydro_principal.f90
+!        call godunov(2,dt)
+!     else
+!        call godunov(2,dt)
+!        call godunov(1,dt)
+!     end if
 
-     nstep=nstep+1
-     t=t+dt
-     write(*,'("step=",I6," t=",1pe10.3," dt=",1pe10.3)')nstep,t,dt
+!     nstep=nstep+1
+!     t=t+dt
+!     write(*,'("step=",I6," t=",1pe10.3," dt=",1pe10.3)')nstep,t,dt
 
-  end do
+!  end do
 
   ! Final output
-  if (on_output) call output ! module_hydro_IO.f90
+!  if (on_output) call output ! module_hydro_IO.f90
 
 
   ! Timing
-  call cpu_time(t_fin)
-  call system_clock(nbp_final)
-  tps_cpu=t_fin-t_deb
-  if (nbp_final>nbp_init) then
-     tps_elapsed=real(nbp_final-nbp_init)/real(freq_p)
-  else
-     tps_elapsed=real(nbp_final-nbp_init+nbp_max)/real(freq_p) 
-  endif  
+!  call cpu_time(t_fin)
+!  call system_clock(nbp_final)
+!  tps_cpu=t_fin-t_deb
+!  if (nbp_final>nbp_init) then
+!     tps_elapsed=real(nbp_final-nbp_init)/real(freq_p)
+!  else
+!     tps_elapsed=real(nbp_final-nbp_init+nbp_max)/real(freq_p) 
+!  endif  
   print *
   print *,'Temps CPU (s.)     : ',tps_cpu
   print *,'Temps elapsed (s.) : ',tps_elapsed
