@@ -46,6 +46,12 @@ module hydro_parameters
   integer(kind=prec_int) :: noutput=100
   integer(kind=prec_int) :: nstepmax=1000000
   logical                :: on_output=.true.
+
+  !!!
+  !!! MPI - stuff
+  integer :: exitcode
+  integer :: myid
+  integer :: nproc
 end module hydro_parameters
 
 module hydro_const

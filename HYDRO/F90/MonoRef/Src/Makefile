@@ -3,7 +3,7 @@
 #--------------------------------------
 
 #don't forget to load the correct modules first!
-include ../../../Arch/make_intel
+include ../../../Arch/make_gfortran
 
 # Sources directories
 #--------------------
@@ -13,7 +13,8 @@ SRCDIR = .
 #--------
 OBJ = module_hydro_commun.o module_hydro_IO.o module_hydro_utils.o module_hydro_principal.o main.o module_mladen.o
 
-default: mono
+#default: mono
+default: mpi
 
 mono: FCOMP = $(F90)
 mono: FCOMPFLAGS = $(FFLAGS)

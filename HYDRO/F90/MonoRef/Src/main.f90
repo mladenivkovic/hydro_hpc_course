@@ -4,10 +4,11 @@
 
 program hydro_main
   use hydro_commons
-  use hydro_parameters
+  use hydro_parameters ! contains MPI vars
   use hydro_IO
   use hydro_principal
   use mladen
+  use mpi
   implicit none
 
   real(kind=prec_real)   :: dt, tps_elapsed, tps_cpu, t_deb, t_fin
@@ -20,10 +21,10 @@ program hydro_main
   call cpu_time(t_deb)
 
   ! Read run parameters
-  call read_params ! is in module_hydro_IO.f90
+  call read_params ! is in module_hydro_IO.f90, initialise MPI
 
   ! Call my own subroutine
-  call writetoscreen('It works!')
+  !call writetoscreen('It works!')
 
 
   ! Initialize hydro grid
@@ -79,5 +80,5 @@ program hydro_main
   print *,'Temps CPU (s.)     : ',tps_cpu
   print *,'Temps elapsed (s.) : ',tps_elapsed
   print *
-  
+  call MPI_FINALIZE(exitcode)
 end program hydro_main
