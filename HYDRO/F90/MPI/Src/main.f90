@@ -11,7 +11,7 @@ program hydro_main
   use mpi
   implicit none
 
-  real(kind=prec_real)   :: dt, tps_elapsed, tps_cpu, t_deb, t_fin
+  real(kind=prec_real)   :: dt, dt_sync, tps_elapsed, tps_cpu, t_deb, t_fin
   integer(kind=prec_int) :: nbp_init, nbp_final, nbp_max, freq_p,i,j
   character(len=100) :: message, c
 
@@ -51,19 +51,31 @@ program hydro_main
      if(MOD(nstep,2)==0)then
         call cmpdt(dt) ! module_hydro_principal.f90
         if(nstep==0)dt=dt/2.
+
+
+!Left this part commented out just in case I need to test it again
+
+!        write(message, *) " Before MPI allreduce, dt = ", dt
+!        call writetoscreen(message)
+
+!        if (myid==2)dt=0.00001  
+        call MPI_ALLREDUCE(dt, dt_sync, 1, MPI_DOUBLE_PRECISION, MPI_MIN, MPI_COMM_WORLD, exitcode )
+       
+!        write(message, *) " After MPI allreduce, dt = ", dt_sync
+!        call writetoscreen(message)
      endif
 
      ! Directional splitting
      if(MOD(nstep,2)==0)then
-        call godunov(1,dt) !module_hydro_principal.f90
-        call godunov(2,dt)
+        call godunov(1,dt_sync) !module_hydro_principal.f90
+        call godunov(2,dt_sync)
      else
-        call godunov(2,dt)
-        call godunov(1,dt)
+        call godunov(2,dt_sync)
+        call godunov(1,dt_sync)
      end if
 
      nstep=nstep+1
-     t=t+dt
+     t=t+dt_sync
      write(message, '(" step= ",I6,"   t= ",1pe10.3,"   dt=",1pe10.3)')nstep,t,dt
      call writetoscreen(message)
 
