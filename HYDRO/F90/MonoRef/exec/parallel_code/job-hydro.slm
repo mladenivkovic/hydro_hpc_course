@@ -6,6 +6,6 @@
 
 export DATE=`date +%F_%Hh%M`
 
-srun -n 8 ./ramses3d-mladen clumpfindtesting.nml > run$DATE.log
+srun -n 8 ./hydro_mpi mladen-IO-sedov_100x100.nml > run$DATE.log
 
 #SBATCH --mem=64000
