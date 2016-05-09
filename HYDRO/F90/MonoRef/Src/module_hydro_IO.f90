@@ -10,15 +10,13 @@ module hydro_IO
 contains
 
 subroutine read_params
-  use hydro_parameters !contains MPI vars
+  use hydro_parameters
   use mladen
-  use mpi
   implicit none
 
   ! Local variables
   integer(kind=prec_int) :: narg,iargc
   character(LEN=80) :: infile
-  character(LEN=80) :: message
 
   ! Namelists
   namelist/run/nstepmax,tend,noutput,on_output
@@ -40,13 +38,6 @@ subroutine read_params
   read(1,NML=hydro)
   close(1)
   
-
-  !! INITIATE MPI
-  call MPI_INIT(exitcode)
-  call MPI_COMM_SIZE(MPI_COMM_WORLD, nproc, exitcode)
-  call MPI_COMM_RANK(MPI_COMM_WORLD, myid, exitcode)
-  myid = myid+1
-
 
   !other init stuff
   call makedir('hydro_output')
