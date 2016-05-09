@@ -22,10 +22,6 @@ program hydro_main
   ! Read run parameters
   call read_params ! is in module_hydro_IO.f90
 
-  ! Call my own subroutine
-  call writetoscreen('It works!')
-
-
   ! Initialize hydro grid
   call init_hydro ! from module_hydro_principal.f90
 
