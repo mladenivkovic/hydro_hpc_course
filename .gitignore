@@ -7,3 +7,4 @@ hydro_mono
 *.pyc
 *.o
 *.mod
+hydro_mpi
