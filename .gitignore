@@ -5,3 +5,5 @@ output_*
 *.mp4
 hydro_mono
 *.pyc
+*.o
+*.mod
