@@ -14,10 +14,23 @@ subroutine init_hydro
   use hydro_commons
   use hydro_const
   use hydro_parameters
+  use mpi
   implicit none
 
   ! Local variables
   integer(kind=prec_int) :: i,j
+  integer(kind=prec_int) :: rest
+
+  ! INITIATE ARRAY LENGTH
+  ! splitting in x direction
+  imax = nx / nproc
+  rest = mod(nx, nproc)
+  if (rest /= 0) then
+    do i = 1, rest
+      if (myid == i) imax = imax + 1
+    end do
+  end if
+
 
   imin=1
   imax=nx+4
