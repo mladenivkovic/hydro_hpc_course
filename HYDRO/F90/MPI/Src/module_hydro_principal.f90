@@ -68,7 +68,7 @@ subroutine init_hydro
      end do
   end do
   ! initiating primary "bang"
-  uold(imin+2,jmin+2,IP)=1./dx/dx
+  if (myid==1) uold(imin+2,jmin+2,IP)=1./dx/dx
 
 !!$  ! 1D Sod test
 !!$  do j=jmin+2,jmax-2
