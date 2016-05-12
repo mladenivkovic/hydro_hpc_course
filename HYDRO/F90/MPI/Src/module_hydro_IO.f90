@@ -29,8 +29,8 @@ subroutine read_params
 
   narg = iargc()
   IF(narg .NE. 1)THEN
-     call writetoscreen(' You should type: a.out input.nml')
-     call writetoscreen(' File input.nml should contain a parameter namelist')
+     print*, ' You should type: a.out input.nml'
+     print*, ' File input.nml should contain a parameter namelist'
      STOP
   END IF
   CALL getarg(1,infile)
@@ -46,6 +46,10 @@ subroutine read_params
   call MPI_COMM_SIZE(MPI_COMM_WORLD, nproc, exitcode)
   call MPI_COMM_RANK(MPI_COMM_WORLD, myid, exitcode)
   myid = myid+1
+
+  call writetoscreen('#################################')
+  call writetoscreen('######      HYDRO CODE     ######')
+  call writetoscreen('#################################')
 
 
   !other init stuff
