@@ -41,7 +41,7 @@ fig = pyplot.figure(facecolor='white')
 ax = fig.add_subplot(1,1,1)
 
 print "plotting"
-im=ax.imshow(dat[0,:,:],interpolation='none', vmin=0.0, vmax=10.0)
+im=ax.imshow(dat[0,:,:],interpolation='none', vmin=0.0, vmax=10.0, cmap='Blues_r')
 fig.colorbar(im, fraction=0.046, pad=0.04)
 
 workdir = str(getcwd())
