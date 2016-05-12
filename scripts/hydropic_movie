@@ -37,7 +37,7 @@ f.close()
 dat = numpy.array(dat)
 dat = dat.reshape(nvar,ny,nx)
 
-fig = pyplot.figure(facecolor='white')
+fig = pyplot.figure(facecolor='white', figsize=(5,5), dpi=150)
 ax = fig.add_subplot(1,1,1)
 
 print "plotting"
@@ -52,7 +52,7 @@ extension = 'png'
 fig_path = workdir+'/'+outputfilename+'.'+extension
 
 print "saving ", fig_path
-pyplot.savefig(fig_path, format=extension, facecolor=fig.get_facecolor(), transparent=True, dpi=100)
+pyplot.savefig(fig_path, format=extension, facecolor=fig.get_facecolor(), transparent=False, dpi=150)
 pyplot.close()
 
 print "done"
