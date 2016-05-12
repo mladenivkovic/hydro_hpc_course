@@ -18,14 +18,42 @@ subroutine init_hydro
 
   ! Local variables
   integer(kind=prec_int) :: i,j
+  integer(kind=prec_int) :: domainwidth_x
 
-  imin=1
-  imax=nx+4
-  jmin=1
-  jmax=ny+4
+  allocate(imin_global(1:nproc), imax_global(1:nproc), jmin_global(1:nproc), jmax_global(1:nproc))
+
   
-  allocate(uold(imin:imax,jmin:jmax,1:nvar))
+  domainwidth_x = nx/nproc
 
+  do i = 1, nproc
+    imax_global(i) = domainwidth_x * i + 4
+    imin_global(i) = 1 + domainwidth_x * (i-1)
+    jmin_global(i) = 1
+    jmax_global(i) = ny + 4
+  end do
+
+  if(mod(nx, nproc) /= 0) then
+    do i = 0, mod(nx, nproc)-1
+      imax_global(nproc - i) = imax_global(nproc - i) + mod(nx, nproc) - i
+      imin_global(nproc - i) = imin_global(nproc - i) + mod(nx, nproc) - 1 - i
+    end do
+  end if
+  
+
+  imin=imin_global(myid)
+  imax=imax_global(myid)
+  jmin=jmin_global(myid)
+  jmax=jmax_global(myid)
+  nx = imax - imin -4 + 1
+  ny = jmax - jmin -4 + 1
+  
+  if (myid == 1) write(*, '(A, 10I4)') "imax_global ", imax_global
+  if (myid == 1) write(*, '(A, 10I4)') "imin_global ", imin_global
+  if (myid == 1) write(*, '(A, 10I4)') "nx, ny ",nx, ny
+
+  allocate(uold(imin:imax,jmin:jmax,1:nvar))
+  !allocate(uold(1:nx+4, 1:ny+4, 1:nvar))
+  
   ! Initial conditions in grid interior
   ! Warning: conservative variables U = (rho, rhou, rhov, E)
   ! rho: density
@@ -96,14 +124,14 @@ subroutine cmpdt(dt)
   cournoy = zero
 
   allocate(q(1:nx,1:IP),e(1:nx),c(1:nx))
-
+  !allocate( q(imin:imax, 1:IP), e(imin:imax), c(imin:imax))
   do j=jmin+2,jmax-2
-     do i=1,nx
-        q(i,ID) = max(uold(i+2,j,ID),smallr) ! take the bigger of the two -> so that the density doesn't surpass a minimal value "smallr"
-        q(i,IU) = uold(i+2,j,IU)/q(i,ID) !calculate velocities: rho*v/rho
-        q(i,IV) = uold(i+2,j,IV)/q(i,ID)
+     do i=1, nx
+        q(i,ID) = max(uold(i+1+imin,j,ID),smallr) ! take the bigger of the two -> so that the density doesn't surpass a minimal value "smallr"
+        q(i,IU) = uold(i+1+imin,j,IU)/q(i,ID) !calculate velocities: rho*v/rho
+        q(i,IV) = uold(i+1+imin,j,IV)/q(i,ID)
         eken = half*(q(i,IU)**2+q(i,IV)**2) ! calcualte kinetic energy
-        q(i,IP) = uold(i+2,j,IP)/q(i,ID) - eken
+        q(i,IP) = uold(i+1+imin,j,IP)/q(i,ID) - eken
         e(i)=q(i,IP)
      end do
 
@@ -172,8 +200,8 @@ subroutine godunov(idim,dt)
 
         do in = 1,nvar
            do i=1,nx+1
-              qleft (i,in)=qxm(i+1,in)
-              qright(i,in)=qxp(i+2,in)
+              qleft (i,in)=qxm(i+imin,in)
+              qright(i,in)=qxp(i+1+imin,in)
            end do
         end do
 
@@ -188,11 +216,11 @@ subroutine godunov(idim,dt)
         call cmpflx(qgdnv,flux)
  
         ! Update conservative variables 
-        do i=imin+2,imax-2
-           uold(i,j,ID)=u(i,ID)+(flux(i-2,ID)-flux(i-1,ID))*dtdx
-           uold(i,j,IU)=u(i,IU)+(flux(i-2,IU)-flux(i-1,IU))*dtdx
-           uold(i,j,IV)=u(i,IV)+(flux(i-2,IV)-flux(i-1,IV))*dtdx
-           uold(i,j,IP)=u(i,IP)+(flux(i-2,IP)-flux(i-1,IP))*dtdx
+        do i=3, nx + 1
+           uold(i+imin-1,j,ID)=u(i+imin-1,ID)+(flux(i-2,ID)-flux(i-1,ID))*dtdx
+           uold(i+imin-1,j,IU)=u(i+imin-1,IU)+(flux(i-2,IU)-flux(i-1,IU))*dtdx
+           uold(i+imin-1,j,IV)=u(i+imin-1,IV)+(flux(i-2,IV)-flux(i-1,IV))*dtdx
+           uold(i+imin-1,j,IP)=u(i+imin-1,IP)+(flux(i-2,IP)-flux(i-1,IP))*dtdx
         end do
         if(nvar>4)then
            do in = 5,nvar

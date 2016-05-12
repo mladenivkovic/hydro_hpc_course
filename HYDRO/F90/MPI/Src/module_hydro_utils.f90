@@ -31,6 +31,18 @@ subroutine make_boundary(idim)
 !!$ integer(kind=prec_int) :: ijet
 !!$ real(kind=prec_real) :: djet,ujet,pjet
 
+
+
+  if(myid == 1) then
+    boundary_left=1    !wall
+  else if (myid == nproc) then
+    boundary_right=1   !wall
+  else
+    boundary_left=3 !zeros
+    boundary_right=3
+  end if
+
+  
   if(idim==1)then
      
      ! Left boundary
@@ -46,7 +58,7 @@ subroutine make_boundary(idim)
               i0=nx+i
            end if
            do j=jmin+2,jmax-2
-              uold(i,j,ivar)=uold(i0,j,ivar)*sign
+              uold(i+imin-1,j,ivar)=uold(i0+imin-1,j,ivar)*sign
            end do
         end do
      end do
@@ -64,7 +76,7 @@ subroutine make_boundary(idim)
               i0=i-nx
            end if
            do j=jmin+2,jmax-2
-              uold(i,j,ivar)=uold(i0,j,ivar)*sign
+              uold(i+imin-1,j,ivar)=uold(i0+imin-1,j,ivar)*sign
            end do
         end do
      end do
