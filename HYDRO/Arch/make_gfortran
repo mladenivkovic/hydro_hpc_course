@@ -20,7 +20,7 @@ CFLAGS = -O3
 
 # Fortran compilation options
 #-----------------------------
-FFLAGS = -O3
+FFLAGS = -O3 -traceback -check uninit -check bounds -ftrapuv -fpp -fpe0 -cpp
 
 # Linker options
 #---------------
