@@ -22,7 +22,8 @@ subroutine init_hydro
 
   allocate(imin_global(1:nproc), imax_global(1:nproc), jmin_global(1:nproc), jmax_global(1:nproc))
 
-  
+  nx_global=nx
+  ny_global=ny
   domainwidth_x = nx/nproc
 
   do i = 1, nproc
@@ -47,9 +48,9 @@ subroutine init_hydro
   nx = imax - imin -4 + 1
   ny = jmax - jmin -4 + 1
   
-  if (myid == 1) write(*, '(A, 10I4)') "imax_global ", imax_global
-  if (myid == 1) write(*, '(A, 10I4)') "imin_global ", imin_global
-  if (myid == 1) write(*, '(A, 10I4)') "nx, ny ",nx, ny
+  !if (myid == 1) write(*, '(A, 10I4)') "imax_global ", imax_global
+  !if (myid == 1) write(*, '(A, 10I4)') "imin_global ", imin_global
+  !if (myid == 1) write(*, '(A, 10I4)') "nx, ny ",nx, ny
 
   allocate(uold(imin:imax,jmin:jmax,1:nvar))
   !allocate(uold(1:nx+4, 1:ny+4, 1:nvar))

@@ -21,6 +21,7 @@ subroutine make_boundary(idim)
   use hydro_commons
   use hydro_const
   use hydro_parameters
+  use mladen ! communicate_boundaries
   implicit none
 
   ! Dummy arguments
@@ -31,7 +32,7 @@ subroutine make_boundary(idim)
 !!$ integer(kind=prec_int) :: ijet
 !!$ real(kind=prec_real) :: djet,ujet,pjet
 
-
+write(*, *) "Entered make_boundary. myid ", myid
 
   if(myid == 1) then
     boundary_left=1    !wall
@@ -80,6 +81,8 @@ subroutine make_boundary(idim)
            end do
         end do
      end do
+    
+     call communicate_boundaries_x()
 
   else
 
@@ -135,6 +138,7 @@ subroutine make_boundary(idim)
      end do
 
   end if
+  write(*, *) "boundaries made. myid ", myid
 end subroutine make_boundary
 
 
