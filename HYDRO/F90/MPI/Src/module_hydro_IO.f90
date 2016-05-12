@@ -49,6 +49,9 @@ subroutine read_params
 
 
   !other init stuff
+  call writetoscreen('##########################################') ! module_mladen.f90
+  call writetoscreen('###             HYDRO CODE             ###')
+  call writetoscreen('##########################################')
   call makedir('hydro_output')
 end subroutine read_params
 

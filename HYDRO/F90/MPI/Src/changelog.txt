@@ -1,14 +1,22 @@
 What has been done so far:
 
 
-2016-05-08 	Implemented my own module to contain my subroutines
-2016-05-09 	The output will now be written to a subdirectory that
-			is called "hydro_output"
-			Initiated MPI. Makefile changed accordingly.
+2016-05-08 	
+	Implemented my own module to contain my subroutines
+
+2016-05-09
+	The output will now be written to a subdirectory that
+	is called "hydro_output"
+	Initiated MPI. Makefile changed accordingly.
+	Parallel output done.
+	Timestep done.
+
+2016-05-10
+	Domain splitting in x direction done.
+	Initial Bang only for myid=1 done.
+
 
 
 TO DO:
 	- Parallelisation:
 		- split domain, set boundaries
-		- timestep
-		- handle parallel output
