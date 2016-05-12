@@ -13,10 +13,12 @@ else
     echo "made new dir picoutput"
 fi
 
+# create png out of fortran output
 for i in output_*; do
     hydropic_movie $i
 done
 
+#create movie out of png
 cd picoutput
 ffmpeg_makemovie
 cd ..

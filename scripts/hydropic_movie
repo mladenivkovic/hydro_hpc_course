@@ -6,12 +6,10 @@
 
 #/usr/bin/python # use this as shebang if on local machine
 
-#    ffmpeg -f image2 -r 2 -pattern_type glob -i '*.png' -r 60 output.mp4
-
-
-# A script to create an image of a HYDRO output file.
+# This script is made to be executer by the makemovie script.
+# It makes pngs out of fortran output.
 # To be used via a bash script.
-# creates a .pdf file with the same name in the same directory.
+# creates a .png file with the same name in the same directory.
 
 
 
