@@ -65,14 +65,14 @@ subroutine communicate_boundaries_x()
     integer :: x, y, z, code, doublesize
     integer, dimension(MPI_STATUS_SIZE) :: status
     character(len=1) :: filename
-    write(*, *) " Entered communicate_boundaries. myid ", myid
+!    write(*, *) " Entered communicate_boundaries. myid ", myid
     ghostcells_send_left = 0 
     ghostcells_send_right = 0
     cells_receive_left = 0
     cells_receive_right = 0
     
-    !domainstart=imin+2
-    !domainend=imax-2
+    !domain start=imin+2
+    !domain end=imax-2
 
 
     do x = 1, 2
@@ -86,51 +86,26 @@ subroutine communicate_boundaries_x()
         end do
     end do
     
-    write(*, *) "  ghost arrays assigned. myid ", myid
+!write(*, *) "  ghost arrays assigned. myid ", myid
 
-    write(filename, '(I1)') myid
-    open(10,file=filename, form='formatted')
-    rewind(10)
-    do x = 1, 2
-        do y = jmin, jmax
-            do z = 1, nvar
-                !copy all ghost cells left of the domain
-                if (myid /= 1) write(10, *) ghostcells_send_left(x,y, z)
-                !copy all ghost cells right of the domain
-                if (myid /= nproc) write(10, *) ghostcells_send_right(x,y, z)
-            end do
-        end do
-    end do
-    close(10)
-
-    
-    write(*, *) "nx, ny =", nx, ny, nproc
 
     !send ghostcells_send_left (ghost cells left of domain), receive cells of the domain that are left
 
     call MPI_SIZEOF(1.d0, doublesize, exitcode)
-
+    ! WARNING! MYID = RANK + 1 !!!!!
     if (myid /= 1) then 
-        call MPI_SENDRECV(ghostcells_send_left(1:2, jmin:jmax, 1:nvar), 2*ny*nvar, MPI_DOUBLE_PRECISION, myid-1, 100, cells_receive_left(1:2, jmin:jmax, 1:nvar), 2*ny*nvar, MPI_DOUBLE_PRECISION, myid-1, 200, MPI_COMM_WORLD, status, code)
+        call MPI_SENDRECV(ghostcells_send_left(1:2, jmin:jmax, 1:nvar), 2*ny*nvar, MPI_DOUBLE_PRECISION, myid-2, 100, cells_receive_left(1:2, jmin:jmax, 1:nvar), 2*ny*nvar, MPI_DOUBLE_PRECISION, myid-2, 200, MPI_COMM_WORLD, status, code)
     end if
 
 
     if (myid /= nproc) then
-        call MPI_SENDRECV(ghostcells_send_right(1:2, jmin:jmax, 1:nvar), 2*ny*nvar, MPI_DOUBLE_PRECISION, myid+1, 200, cells_receive_right(1:2, jmin:jmax, 1:nvar), 2*ny*nvar, MPI_DOUBLE_PRECISION, myid+1, 100, MPI_COMM_WORLD, status, code)
+        call MPI_SENDRECV(ghostcells_send_right(1:2, jmin:jmax, 1:nvar), 2*ny*nvar, MPI_DOUBLE_PRECISION, myid, 200, cells_receive_right(1:2, jmin:jmax, 1:nvar), 2*ny*nvar, MPI_DOUBLE_PRECISION, myid, 100, MPI_COMM_WORLD, status, code)
     end if
 
 
 
-!    if (myid /= 1) then 
-!        call MPI_SENDRECV(ghostcells_send_left(1, 1, 1), 2*ny*nvar*doublesize, MPI_DOUBLE_PRECISION, myid-1, 100, cells_receive_left(1, 1, 1), 2*ny*nvar*doublesize, MPI_DOUBLE_PRECISION, myid-1, 200, MPI_COMM_WORLD, status, code)
-!    end if
-
-
-!    if (myid /= nproc) then
-!        call MPI_SENDRECV(ghostcells_send_right(1, 1, 1), 2*ny*nvar*doublesize, MPI_DOUBLE_PRECISION, myid+1, 200, cells_receive_right(1, 1, 1), 2*ny*nvar*doublesize, MPI_DOUBLE_PRECISION, myid+1, 100, MPI_COMM_WORLD, status, code)
-!    end if
     ! sum up new cells with old cells
-write(*, *) "    summing up communicated stuff. myid ", myid
+!write(*, *) "    summing up communicated stuff. myid ", myid
     do x = 1, 2
         do y = jmin, jmax
             do z = 1, nvar

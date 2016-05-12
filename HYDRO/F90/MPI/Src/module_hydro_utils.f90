@@ -32,7 +32,7 @@ subroutine make_boundary(idim)
 !!$ integer(kind=prec_int) :: ijet
 !!$ real(kind=prec_real) :: djet,ujet,pjet
 
-write(*, *) "Entered make_boundary. myid ", myid
+!write(*, *) "Entered make_boundary. myid ", myid
 
   if(myid == 1) then
     boundary_left=1    !wall
@@ -138,7 +138,7 @@ write(*, *) "Entered make_boundary. myid ", myid
      end do
 
   end if
-  write(*, *) "boundaries made. myid ", myid
+!write(*, *) "boundaries made. myid ", myid
 end subroutine make_boundary
 
 

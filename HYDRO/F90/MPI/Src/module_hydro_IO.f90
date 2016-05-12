@@ -81,7 +81,6 @@ subroutine output
   write(10)nx,ny,nvar,nstep
   write(10)real(uold(imin+2:imax-2,jmin+2:jmax-2,1:nvar),kind=prec_output)
   close(10)
-  !write(*, *) '---- OUTPUT DONE ---- from proc', myid
 
 contains
 

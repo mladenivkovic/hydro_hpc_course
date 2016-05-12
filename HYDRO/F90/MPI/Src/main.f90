@@ -18,10 +18,6 @@ program hydro_main
 
 
 
-  call writetoscreen('##########################################')
-  call writetoscreen('###             HYDRO CODE             ###')
-  call writetoscreen('##########################################')
-
   ! Initialize clock counter
   ! system_clock and cpu_time are itrinistic fortran subroutines.
   call system_clock(count_rate=freq_p, count_max=nbp_max) 
@@ -36,7 +32,7 @@ program hydro_main
 
 
   call writetoscreen(' ')
-  write(message, *) 'Starting time integration, nx = ',nx,' ny = ',ny  
+  write(message, *) 'Starting time integration, nx = ',nx_global,' ny = ',ny_global  
   call writetoscreen(TRIM(message))
   call writetoscreen(' ')
   ! Main time loop
@@ -52,31 +48,26 @@ program hydro_main
         call cmpdt(dt) ! module_hydro_principal.f90
         if(nstep==0)dt=dt/2.
 
-
-!Left this part commented out just in case I need to test it again
-
-!        write(message, *) " Before MPI allreduce, dt = ", dt
-!        call writetoscreen(message)
-
-!        if (myid==2)dt=0.00001  
         call MPI_ALLREDUCE(dt, dt_sync, 1, MPI_DOUBLE_PRECISION, MPI_MIN, MPI_COMM_WORLD, exitcode )
-       
-!        write(message, *) " After MPI allreduce, dt = ", dt_sync
-!        call writetoscreen(message)
+!write(*, '(A, PE13.6E2, PE13.6E2, I4)') "Allreduce. dt, dtsync, nstep = ", dt, dt_sync, nstep
      endif
 
      ! Directional splitting
      if(MOD(nstep,2)==0)then
+!write(*, '(A, I4)') "Entering Godunov. nstep = ", nstep
         call godunov(1,dt_sync) !module_hydro_principal.f90
         call godunov(2,dt_sync)
      else
+!write(*, '(A, I4)') "Entering Godunov. nstep = ", nstep
         call godunov(2,dt_sync)
         call godunov(1,dt_sync)
      end if
 
+!write(*, '(A, I4)') "Godunov done. nstep = ", nstep
+
      nstep=nstep+1
      t=t+dt_sync
-     write(message, '(" step= ",I6,"   t= ",1pe10.3,"   dt=",1pe10.3)')nstep,t,dt
+     write(message, '(" step= ",I6,"   t= ",1pe10.3,"   dt=",1pe10.3)') nstep,t,dt_sync
      call writetoscreen(message)
 
   end do
