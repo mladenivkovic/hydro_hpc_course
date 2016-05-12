@@ -17,7 +17,6 @@ end module hydro_precision
 module hydro_commons
   use hydro_precision
   integer(kind=prec_int) :: imin,imax,jmin,jmax
-  integer(kind=prec_int), dimension(:), allocatable:: global_imax, global_jmax
   real(kind=prec_real),allocatable,dimension(:,:,:) :: uold
   real(kind=prec_real)   :: t=0.
   integer(kind=prec_int) :: nstep=0
@@ -53,8 +52,6 @@ module hydro_parameters
   integer :: exitcode
   integer :: myid
   integer :: nproc
-  !integer :: type_subarray_sendlefttoright, type_subarray_sendrighttoleft
-  integer :: type_subarray
 end module hydro_parameters
 
 module hydro_const

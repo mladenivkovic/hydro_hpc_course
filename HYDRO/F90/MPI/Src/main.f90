@@ -18,6 +18,9 @@ program hydro_main
 
 
 
+  call writetoscreen('##########################################')
+  call writetoscreen('###             HYDRO CODE             ###')
+  call writetoscreen('##########################################')
 
   ! Initialize clock counter
   ! system_clock and cpu_time are itrinistic fortran subroutines.
@@ -50,16 +53,16 @@ program hydro_main
         if(nstep==0)dt=dt/2.
 
 
-   !Left this part commented out just in case I need to test it again
+!Left this part commented out just in case I need to test it again
 
-   !     write(message, *) " Before MPI allreduce, dt = ", dt
-   !     call writetoscreen(message)
+!        write(message, *) " Before MPI allreduce, dt = ", dt
+!        call writetoscreen(message)
 
-   !       if (myid==2)dt=0.00001  
+!        if (myid==2)dt=0.00001  
         call MPI_ALLREDUCE(dt, dt_sync, 1, MPI_DOUBLE_PRECISION, MPI_MIN, MPI_COMM_WORLD, exitcode )
-      
-   !       write(message, *) " After MPI allreduce, dt = ", dt_sync
-   !         call writetoscreen(message)
+       
+!        write(message, *) " After MPI allreduce, dt = ", dt_sync
+!        call writetoscreen(message)
      endif
 
      ! Directional splitting
@@ -73,7 +76,7 @@ program hydro_main
 
      nstep=nstep+1
      t=t+dt_sync
-     write(message, '(" step= ",I6,"   t= ",1pe10.3,"   dt=",1pe10.3)')nstep,t,dt_sync
+     write(message, '(" step= ",I6,"   t= ",1pe10.3,"   dt=",1pe10.3)')nstep,t,dt
      call writetoscreen(message)
 
   end do
@@ -95,9 +98,5 @@ program hydro_main
   call writetoscreen(' ')
   write(message, *) 'CPU time (s.)     : ',tps_cpu, NEW_LINE(C), ' Time elapsed (s.) : ',tps_elapsed
   call writetoscreen(TRIM(message))
-
-  !call MPI_TYPE_FREE (type_subarray_sendlefttoright,exitcode)
-  !call MPI_TYPE_FREE (type_subarray_sendrighttoleft,exitcode)
-  call MPI_TYPE_FREE (type_subarray,exitcode)
   call MPI_FINALIZE(exitcode)
 end program hydro_main

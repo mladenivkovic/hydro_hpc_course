@@ -18,113 +18,76 @@ module hydro_utils
 contains
 
 subroutine make_boundary(idim)
-use hydro_commons
-use hydro_const
-use hydro_parameters
-use mladen
-use mpi
-!  use hydro_precision, only: imin, imax, jmin, jmax !need to exchange nx resp. ny for
-                                                !true array lenght set it init_hydro
-                                                !(module_hydro_principal.f90)
-implicit none
+  use hydro_commons
+  use hydro_const
+  use hydro_parameters
+  implicit none
 
-! Dummy arguments
-integer(kind=prec_int), intent(in) :: idim
-! Local variables
-integer(kind=prec_int) :: ivar,i,i0,j,j0, this_id
-real(kind=prec_real)   :: sign
+  ! Dummy arguments
+  integer(kind=prec_int), intent(in) :: idim
+  ! Local variables
+  integer(kind=prec_int) :: ivar,i,i0,j,j0
+  real(kind=prec_real)   :: sign
 !!$ integer(kind=prec_int) :: ijet
 !!$ real(kind=prec_real) :: djet,ujet,pjet
 
-if(idim==1)then
-
-
-!! SEND BOUNDARIES
-
-! send right values as left boundaries/ghost cells
-    do this_id = 1, nproc - 1
-        call communicate_boundaries(this_id, 1, uold(imax-3:imax-2, :, :), uold (1:2, :, :))
-    end do
-
-!call MPI_BARRIER(MPI_COMM_WORLD, exitcode)
-! send left values as right boundaries
-    do this_id = nproc, 2, -1
-        call communicate_boundaries(this_id, -1, uold(3:4, :, :), uold(global_imax(this_id-1)-1:global_imax(this_id-1), :, :))
-    end do
-
-
-!! SET UP WALL AT SIMULATION ENDS
-
-    if (myid == 1) then                 ! create wall only if first or last part of grid 
-        !boundary_left=1                 ! boundary: 1: wall; 2: flowtrhough
-        ! Left boundary
-        do ivar=1,nvar                             ! loop over all conservative
-                                                    ! variables
-            do i=1,2                                ! loop two times
-               sign=1.0
-               if(boundary_left==1)then             ! make wall
-                  i0=5-i                            ! i0 = 4 or 3
-                  if(ivar==IU)sign=-1.0             ! if conservative variable is 
-                                                    ! (density) momentum in x dir 
-                                                        
-               else if(boundary_left==2)then        ! flow through (?)
-                  i0=3                              ! fist cell after ghost cells
-    !!             else                                 ! Periodic boundaries
-    !!                  i0 = i + imax   ! i0=nx+i
-               end if
-
-               do j=jmin+2,jmax-2
-                  uold(i,j,ivar)=uold(i0,j,ivar)*sign
-               end do
-            end do
-        end do ! all conservative vars
-
-    else if (myid == nproc) then        ! could get moved to MPI init
-        !boundary_right=1                ! needs to be called only once... 
-
-        ! Right boundary
-        do ivar=1,nvar
-            do i=nx+3, nx+4           ! for the ghost cell
-                sign=1.0
-                if(boundary_right==1)then        ! wall
-                    i0=2*nx+t-i            ! imax -2, imax -1 => last two grids before ghost-grids
-                    if(ivar==IU)sign=-1.0
-                else if(boundary_right==2)then   ! flowthrough
-                    i0=nx +2                     ! last grid before ghostgrid
-    !!              else                           ! periodic
-    !!                  i0=i-nx 
-                end if
-               
-                do j=jmin+2,jmax-2
-                  uold(i,j,ivar)=uold(i0,j,ivar)*sign   ! assign ghost grids
-                end do
-            end do
+  if(idim==1)then
+     
+     ! Left boundary
+     do ivar=1,nvar
+        do i=1,2           
+           sign=1.0
+           if(boundary_left==1)then
+              i0=5-i
+              if(ivar==IU)sign=-1.0
+           else if(boundary_left==2)then
+              i0=3
+           else
+              i0=nx+i
+           end if
+           do j=jmin+2,jmax-2
+              uold(i,j,ivar)=uold(i0,j,ivar)*sign
+           end do
         end do
+     end do
 
-    end if
+     ! Right boundary
+     do ivar=1,nvar
+        do i=nx+3,nx+4
+           sign=1.0
+           if(boundary_right==1)then
+              i0=2*nx+5-i
+              if(ivar==IU)sign=-1.0
+           else if(boundary_right==2)then
+              i0=nx+2
+           else
+              i0=i-nx
+           end if
+           do j=jmin+2,jmax-2
+              uold(i,j,ivar)=uold(i0,j,ivar)*sign
+           end do
+        end do
+     end do
 
+  else
 
-
-else
-
-    ! Lower boundary
-    do ivar=1,nvar
+     ! Lower boundary
+     do ivar=1,nvar
         do j=1,2           
-            sign=1.0
-            if(boundary_down==1)then
-               j0=5-j
-               if(ivar==IV)sign=-1.0
-            else if(boundary_down==2)then
-                j0=3
-            else
-                j0=ny+j
-            end if
-
-            do i=imin+2,imax-2
-                uold(i,j,ivar)=uold(i,j0,ivar)*sign
-            end do
+           sign=1.0
+           if(boundary_down==1)then
+              j0=5-j
+              if(ivar==IV)sign=-1.0
+           else if(boundary_down==2)then
+              j0=3
+           else
+              j0=ny+j
+           end if
+           do i=imin+2,imax-2
+              uold(i,j,ivar)=uold(i,j0,ivar)*sign
+           end do
         end do
-    end do
+     end do
 
 !!$        djet=1.0
 !!$        ujet=300.
@@ -141,45 +104,45 @@ else
 !!$           end do
 !!$        end do
 
-    ! Upper boundary
-    do ivar=1,nvar
-       do j=ny+3,ny+4
-          sign=1.0
-          if(boundary_up==1)then
-             j0=2*ny+5-j
-             if(ivar==IV)sign=-1.0
-          else if(boundary_up==2)then
-             j0=ny+2
-          else
-             j0=j-ny
-          end if
-          do i=imin+2,imax-2
-             uold(i,j,ivar)=uold(i,j0,ivar)*sign
-          end do
-       end do
-    end do
+     ! Upper boundary
+     do ivar=1,nvar
+        do j=ny+3,ny+4
+           sign=1.0
+           if(boundary_up==1)then
+              j0=2*ny+5-j
+              if(ivar==IV)sign=-1.0
+           else if(boundary_up==2)then
+              j0=ny+2
+           else
+              j0=j-ny
+           end if
+           do i=imin+2,imax-2
+              uold(i,j,ivar)=uold(i,j0,ivar)*sign
+           end do
+        end do
+     end do
 
-end if ! which direction
+  end if
 end subroutine make_boundary
 
 
 subroutine constoprim(u,q,c)
-use hydro_commons
-use hydro_const
-use hydro_parameters
-implicit none
+  use hydro_commons
+  use hydro_const
+  use hydro_parameters
+  implicit none
 
-! Dummy arguments
-real(kind=prec_real), dimension(:,:), intent(in)   :: u
-real(kind=prec_real), dimension(:,:), intent(out)  :: q
-real(kind=prec_real), dimension(:)  , intent(out)  :: c
-! Local variables
-integer(kind=prec_int) :: i,IN,ijmax,ijmin
-real(kind=prec_real)   :: eken
-real(kind=prec_real), dimension(1:size(c)) :: e
+  ! Dummy arguments
+  real(kind=prec_real), dimension(:,:), intent(in)   :: u
+  real(kind=prec_real), dimension(:,:), intent(out)  :: q
+  real(kind=prec_real), dimension(:)  , intent(out)  :: c
+  ! Local variables
+  integer(kind=prec_int) :: i,IN,ijmax,ijmin
+  real(kind=prec_real)   :: eken
+  real(kind=prec_real), dimension(1:size(c)) :: e
 
-! ::: .....::::: convert to non-conservation form and compute
-! ::: .....::::: pressure via equation of state
+  ! ::: .....::::: convert to non-conservation form and compute
+  ! ::: .....::::: pressure via equation of state
   ijmin = 1
   ijmax=size(c)
   do i = ijmin, ijmax

@@ -14,48 +14,17 @@ subroutine init_hydro
   use hydro_commons
   use hydro_const
   use hydro_parameters
-  use mladen !build communicator, call writetoscreen
-  use mpi
   implicit none
 
   ! Local variables
   integer(kind=prec_int) :: i,j
-  integer(kind=prec_int) :: rest
-  integer(kind=prec_int), dimension(:), allocatable :: local_imax_array, local_jmax_array
-  !character(len=210) :: message
-
-  ! INITIATE ARRAY LENGTH
-  ! splitting in x direction
-  imax = nx / nproc
-  jmax = ny     ! to be changed if split in y direction
-  rest = mod(nx, nproc)
-  if (rest /= 0) then
-    do i = nproc, nproc-rest, -1
-      if (myid == i) imax = imax + 1
-    end do
-  end if
-
-!write(*, *) "myid: ", myid, " imax: ", imax
 
   imin=1
-  nx = imax
-  imax=imax+4
-  ny=jmax
+  imax=nx+4
   jmin=1
-  jmax=jmax+4     ! nx: the "real" array; imax: the full array including ghost cells
+  jmax=ny+4
   
   allocate(uold(imin:imax,jmin:jmax,1:nvar))
-
-  ! communicate global index ranges
-  allocate(global_imax(1:nproc), local_imax_array(1:nproc))
-  
-  global_imax = 0
-  local_imax_array = 0
-  local_imax_array(myid) = imax
-
-
-  call MPI_ALLREDUCE(local_imax_array, global_imax, nproc, MPI_INTEGER, MPI_SUM, MPI_COMM_WORLD, exitcode)
-
 
   ! Initial conditions in grid interior
   ! Warning: conservative variables U = (rho, rhou, rhov, E)
@@ -86,7 +55,7 @@ subroutine init_hydro
      end do
   end do
   ! initiating primary "bang"
-  if (myid==1) uold(imin+2,jmin+2,IP)=1./dx/dx
+  uold(imin+2,jmin+2,IP)=1./dx/dx
 
 !!$  ! 1D Sod test
 !!$  do j=jmin+2,jmax-2
@@ -104,8 +73,6 @@ subroutine init_hydro
 !!$     end do
 !!$  end do
 
-
-    call build_communicator()
 end subroutine init_hydro
 
 
@@ -131,7 +98,7 @@ subroutine cmpdt(dt)
   allocate(q(1:nx,1:IP),e(1:nx),c(1:nx))
 
   do j=jmin+2,jmax-2
-     do i=1, nx
+     do i=1,nx
         q(i,ID) = max(uold(i+2,j,ID),smallr) ! take the bigger of the two -> so that the density doesn't surpass a minimal value "smallr"
         q(i,IU) = uold(i+2,j,IU)/q(i,ID) !calculate velocities: rho*v/rho
         q(i,IV) = uold(i+2,j,IV)/q(i,ID)
@@ -165,7 +132,7 @@ subroutine godunov(idim,dt)
   implicit none
 
   ! Dummy arguments
-  integer(kind=prec_int), intent(in) :: idim !in which dimension (x or y) x= 1, y = 2
+  integer(kind=prec_int), intent(in) :: idim !in which dimensin (x or y) x= 1, y = 2
   real(kind=prec_real),   intent(in) :: dt
   ! Local variables
   integer(kind=prec_int) :: i,j,in
@@ -175,7 +142,7 @@ subroutine godunov(idim,dt)
   dtdx=dt/dx
 
   ! Update boundary conditions
-  call make_boundary(idim) !module_hydro_utils.f90
+  call make_boundary(idim)
 
   if (idim==1)then
      ! Allocate work space for 1D sweeps
@@ -200,6 +167,7 @@ subroutine godunov(idim,dt)
         ! Convert to primitive variables
         call constoprim(u,q,c)
 
+        ! Characteristic tracing
         call trace(q,dq,c,qxm,qxp,dtdx)
 
         do in = 1,nvar
