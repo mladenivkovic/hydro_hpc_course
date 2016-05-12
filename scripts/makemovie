@@ -18,8 +18,7 @@ for i in output_*; do
 done
 
 cd picoutput
-ffmpeg -f image2 -r 10 -pattern_type glob -i '*.png' -r 25 ../movie.mp4
-
+ffmpeg_makemovie
 cd ..
 
 echo "done"
