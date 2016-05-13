@@ -56,7 +56,10 @@ subroutine make_boundary(idim)
            else if(boundary_left==2)then
               i0=3
            else
-              i0=nx+i
+              i0=i      !set =0
+              do j=jmin+2, jmax-2
+                uold(imin-1+i0, j, ivar) = 0.0
+              end do
            end if
            do j=jmin+2,jmax-2
               uold(i+imin-1,j,ivar)=uold(i0+imin-1,j,ivar)*sign
@@ -74,7 +77,10 @@ subroutine make_boundary(idim)
            else if(boundary_right==2)then
               i0=nx+2
            else
-              i0=i-nx
+              i0=i       !set = 0
+              do j=jmin+2, jmax-2
+                uold(imin-1+i0, j, ivar) = 0.0
+              end do
            end if
            do j=jmin+2,jmax-2
               uold(i+imin-1,j,ivar)=uold(i0+imin-1,j,ivar)*sign

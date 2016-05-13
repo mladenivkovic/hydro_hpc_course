@@ -3,7 +3,7 @@
 #--------------------------------------
 
 #don't forget to load the correct modules first!
-include ../../../Arch/make_gfortran
+include ../../../Arch/make_intel
 
 # Sources directories
 #--------------------

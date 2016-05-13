@@ -20,13 +20,13 @@ CFLAGS = -O3
 
 # Fortran compilation options
 #----------------------------
-FFLAGS = -O3 
-# -traceback -mcmodel=medium -shared-intel -check all
+FFLAGS = -O3
+#-traceback -mcmodel=medium -shared-intel -check all
 
 # Linker options
 #---------------
-LDFLAGS = -O3
-# -traceback -mcmodel=medium -shared-intel -check all
+LDFLAGS = -O3 
+#-traceback -mcmodel=medium -shared-intel -check all
 
 # OpenMP C compilation options
 #-----------------------------
