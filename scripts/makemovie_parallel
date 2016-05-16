@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# creates a movie of HYDRO output files named movie.mp4
+# execute in the directory where the outputs are
+
+
+# Get nr of processors used for simulation as cmd line arg, 
+# or complain if you don't.
+if [ "$#" -gt 1 ] || [ "$#" == 0 ] ; then
+    echo "give the number of processors used as cmd line arg"
+    exit
+else
+    nproc="$1"
+    echo " working with " $nproc "output files per output."
+fi
+
+
+#check if subdir "picoutput" exists. if not, create it.
+if [ -d "picoutput" ]; then
+    echo "Directory picoutput already exists."
+else
+    mkdir -p picoutput
+    echo "made new dir picoutput"
+fi
+
+
+echo "creating png files"
+for i in output_*.00001; do
+    name=${i:0:12}
+    hydropic_movie_parallel "$nproc" ./"$name"*
+    #echo ./"$name"*
+done
+echo "png files created"
+
+
+#create movie out of png
+echo "creating movie"
+cd picoutput
+ffmpeg_makemovie
+cd ..
+
+echo "done"
+
