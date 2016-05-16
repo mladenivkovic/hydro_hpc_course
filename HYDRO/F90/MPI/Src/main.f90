@@ -7,7 +7,7 @@ program hydro_main
   use hydro_parameters ! contains MPI vars
   use hydro_IO
   use hydro_principal
-  use mladen
+  use mladen ! writetoscreen
   use mpi
   implicit none
 
@@ -48,21 +48,17 @@ program hydro_main
         call cmpdt(dt) ! module_hydro_principal.f90
         if(nstep==0)dt=dt/2.
         call MPI_ALLREDUCE(dt, dt_sync, 1, MPI_DOUBLE_PRECISION, MPI_MIN, MPI_COMM_WORLD, exitcode )
-!write(*, '(A, PE13.6E2, PE13.6E2, I4)') "Allreduce. dt, dtsync, nstep = ", dt, dt_sync, nstep
      endif
 
      ! Directional splitting
      if(MOD(nstep,2)==0)then
-!write(*, '(A, I4)') "Entering Godunov. nstep = ", nstep
         call godunov(1,dt_sync) !module_hydro_principal.f90
         call godunov(2,dt_sync)
      else
-!write(*, '(A, I4)') "Entering Godunov. nstep = ", nstep
         call godunov(2,dt_sync)
         call godunov(1,dt_sync)
      end if
 
-!write(*, '(A, I4)') "Godunov done. nstep = ", nstep
 
      nstep=nstep+1
      t=t+dt_sync

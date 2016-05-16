@@ -14,7 +14,6 @@ subroutine init_hydro
   use hydro_commons
   use hydro_const
   use hydro_parameters
-  use mladen
   implicit none
 
   ! Local variables
@@ -22,6 +21,10 @@ subroutine init_hydro
   integer(kind=prec_int) :: domainwidth_x
 
   allocate(imin_global(1:nproc), imax_global(1:nproc), jmin_global(1:nproc), jmax_global(1:nproc))
+
+
+  ! Assigning domain width to each processor
+  ! TODO: the same for y direction (jmin, jmax)
 
   nx_global=nx
   ny_global=ny
@@ -47,15 +50,8 @@ subroutine init_hydro
   imax=imax_global(myid)
   jmin=jmin_global(myid)
   jmax=jmax_global(myid)
-  !nx = imax - imin -4 + 1
-  !ny = jmax - jmin -4 + 1
-  
-  !if (myid == 1) write(*, '(A, 10I4)') "imax_global ", imax_global
-  !if (myid == 1) write(*, '(A, 10I4)') "imin_global ", imin_global
-  !if (myid == 1) write(*, '(A, 10I4)') "nx, ny ",nx, ny
 
   allocate(uold(1:nx+4, 1:ny+4, 1:nvar))
-  !allocate(uold(1:nx+4, 1:ny+4, 1:nvar))
   
   ! Initial conditions in grid interior
   ! Warning: conservative variables U = (rho, rhou, rhov, E)
