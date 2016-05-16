@@ -34,61 +34,74 @@ subroutine make_boundary(idim)
 
 !write(*, *) "Entered make_boundary. myid ", myid
 
-  if(myid == 1) then
-    boundary_left=1    !wall
-  else if (myid == nproc) then
-    boundary_right=1   !wall
-  else
-    boundary_left=3 !zeros
-    boundary_right=3
-  end if
+
+
+
+
+!create walls
+
+
+
 
   
   if(idim==1)then
+
+    call communicate_boundaries_x()
+!    call reset_boundaries(1)
+!    call reset_boundaries(2)
+
+      if(myid == 1) then
+        call makewall(1) !make left wall
+      else if (myid == nproc) then
+        call makewall(2) !make right wall
+      end if   
      
      ! Left boundary
-     do ivar=1,nvar
-        do i=1,2           
-           sign=1.0
-           if(boundary_left==1)then
-              i0=5-i
-              if(ivar==IU)sign=-1.0
-           else if(boundary_left==2)then
-              i0=3
-           else
-              i0=i      !set =0
-              do j=jmin+2, jmax-2
-                uold(imin-1+i0, j, ivar) = 0.0
-              end do
-           end if
-           do j=jmin+2,jmax-2
-              uold(i+imin-1,j,ivar)=uold(i0+imin-1,j,ivar)*sign
-           end do
-        end do
-     end do
+!     do ivar=1,nvar
+!        do i=1,2           
+!           sign=1.0
+!           if(boundary_left==1)then
+!              i0=5-i
+!              if(ivar==IU)sign=-1.0
+!           !else if(boundary_left==2)then
+!           !   i0=3
+!           else
+!             call reset_boundaries(1)
+!             exit
+!             ! i0=i      !set =0
+!             ! do j=jmin+2, jmax-2
+!             !   uold(imin-1+i0, j, ivar) = 0.0
+!             ! end do
+!           end if
+!           do j=jmin+2,jmax-2
+!              uold(i+imin-1,j,ivar)=uold(i0+imin-1,j,ivar)*sign
+!           end do
+!        end do
+!     end do
 
      ! Right boundary
-     do ivar=1,nvar
-        do i=nx+3,nx+4
-           sign=1.0
-           if(boundary_right==1)then
-              i0=2*nx+5-i
-              if(ivar==IU)sign=-1.0
-           else if(boundary_right==2)then
-              i0=nx+2
-           else
-              i0=i       !set = 0
-              do j=jmin+2, jmax-2
-                uold(imin-1+i0, j, ivar) = 0.0
-              end do
-           end if
-           do j=jmin+2,jmax-2
-              uold(i+imin-1,j,ivar)=uold(i0+imin-1,j,ivar)*sign
-           end do
-        end do
-     end do
+!     do ivar=1,nvar
+!        do i=nx+3,nx+4
+!           sign=1.0
+!           if(boundary_right==1)then
+!              i0=2*nx+5-i
+!              if(ivar==IU)sign=-1.0
+!           else if(boundary_right==2)then
+!              i0=nx+2
+!           else
+!              call reset_boundaries(2)
+!              exit
+!           !   i0=i       !set = 0
+!           !   do j=jmin+2, jmax-2
+!           !     uold(imin-1+i0, j, ivar) = 0.0
+!           !   end do
+!           end if
+!           do j=jmin+2,jmax-2
+!              uold(i+imin-1,j,ivar)=uold(i0+imin-1,j,ivar)*sign
+!           end do
+!        end do
+!     end do
     
-     call communicate_boundaries_x()
 
   else
 

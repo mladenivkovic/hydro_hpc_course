@@ -38,7 +38,7 @@ dat = numpy.array(dat)
 dat = dat.reshape(nvar,ny,nx)
 
 fig = pyplot.figure(facecolor='white', figsize=(5,5), dpi=150)
-ax = fig.add_subplot(1,1,1)
+ax = fig.add_subplot(111, aspect='equal')
 
 print "plotting"
 im=ax.imshow(dat[0,:,:],interpolation='none', vmin=0.0, vmax=10.0, cmap='Blues_r')

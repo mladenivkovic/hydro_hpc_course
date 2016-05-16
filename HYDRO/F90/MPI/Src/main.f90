@@ -47,7 +47,6 @@ program hydro_main
      if(MOD(nstep,2)==0)then
         call cmpdt(dt) ! module_hydro_principal.f90
         if(nstep==0)dt=dt/2.
-
         call MPI_ALLREDUCE(dt, dt_sync, 1, MPI_DOUBLE_PRECISION, MPI_MIN, MPI_COMM_WORLD, exitcode )
 !write(*, '(A, PE13.6E2, PE13.6E2, I4)') "Allreduce. dt, dtsync, nstep = ", dt, dt_sync, nstep
      endif

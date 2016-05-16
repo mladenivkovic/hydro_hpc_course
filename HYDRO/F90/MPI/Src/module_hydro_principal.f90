@@ -14,6 +14,7 @@ subroutine init_hydro
   use hydro_commons
   use hydro_const
   use hydro_parameters
+  use mladen
   implicit none
 
   ! Local variables
@@ -33,6 +34,7 @@ subroutine init_hydro
     jmax_global(i) = ny + 4
   end do
 
+! if there is rest of the division, distribute 1 row of cells per processor starting with the last proc
   if(mod(nx, nproc) /= 0) then
     do i = 0, mod(nx, nproc)-1
       imax_global(nproc - i) = imax_global(nproc - i) + mod(nx, nproc) - i
@@ -45,14 +47,14 @@ subroutine init_hydro
   imax=imax_global(myid)
   jmin=jmin_global(myid)
   jmax=jmax_global(myid)
-  nx = imax - imin -4 + 1
-  ny = jmax - jmin -4 + 1
+  !nx = imax - imin -4 + 1
+  !ny = jmax - jmin -4 + 1
   
   !if (myid == 1) write(*, '(A, 10I4)') "imax_global ", imax_global
   !if (myid == 1) write(*, '(A, 10I4)') "imin_global ", imin_global
   !if (myid == 1) write(*, '(A, 10I4)') "nx, ny ",nx, ny
 
-  allocate(uold(imin:imax,jmin:jmax,1:nvar))
+  allocate(uold(1:nx+4, 1:ny+4, 1:nvar))
   !allocate(uold(1:nx+4, 1:ny+4, 1:nvar))
   
   ! Initial conditions in grid interior
@@ -83,8 +85,13 @@ subroutine init_hydro
         uold(i,j,IP)=1.d-5
      end do
   end do
+
+
+
   ! initiating primary "bang"
-  uold(imin+2,jmin+2,IP)=1./dx/dx
+  if (myid==1) uold(imin+2,jmin+2,IP)=1./dx/dx
+
+
 
 !!$  ! 1D Sod test
 !!$  do j=jmin+2,jmax-2
@@ -128,11 +135,11 @@ subroutine cmpdt(dt)
   !allocate( q(imin:imax, 1:IP), e(imin:imax), c(imin:imax))
   do j=jmin+2,jmax-2
      do i=1, nx
-        q(i,ID) = max(uold(i+1+imin,j,ID),smallr) ! take the bigger of the two -> so that the density doesn't surpass a minimal value "smallr"
-        q(i,IU) = uold(i+1+imin,j,IU)/q(i,ID) !calculate velocities: rho*v/rho
-        q(i,IV) = uold(i+1+imin,j,IV)/q(i,ID)
+        q(i,ID) = max(uold(i+2,j,ID),smallr) ! take the bigger of the two -> so that the density doesn't surpass a minimal value "smallr"
+        q(i,IU) = uold(i+2,j,IU)/q(i,ID) !calculate velocities: rho*v/rho
+        q(i,IV) = uold(i+2,j,IV)/q(i,ID)
         eken = half*(q(i,IU)**2+q(i,IV)**2) ! calcualte kinetic energy
-        q(i,IP) = uold(i+1+imin,j,IP)/q(i,ID) - eken
+        q(i,IP) = uold(i+2,j,IP)/q(i,ID) - eken
         e(i)=q(i,IP)
      end do
 
@@ -175,7 +182,7 @@ subroutine godunov(idim,dt)
 
   if (idim==1)then
      ! Allocate work space for 1D sweeps
-     call allocate_work_space(imin,imax,nx+1)
+     call allocate_work_space(imin,imax,nx+5)
 
      do j=jmin+2,jmax-2
         ! Gather conservative variables
@@ -200,9 +207,9 @@ subroutine godunov(idim,dt)
         call trace(q,dq,c,qxm,qxp,dtdx)
 
         do in = 1,nvar
-           do i=1,nx+1
-              qleft (i,in)=qxm(i+imin,in)
-              qright(i,in)=qxp(i+1+imin,in)
+           do i=imin, imax-3
+              qleft (i,in)=qxm(i+1,in)
+              qright(i,in)=qxp(i+2,in)
            end do
         end do
 
@@ -217,11 +224,11 @@ subroutine godunov(idim,dt)
         call cmpflx(qgdnv,flux)
  
         ! Update conservative variables 
-        do i=3, nx + 1
-           uold(i+imin-1,j,ID)=u(i+imin-1,ID)+(flux(i-2,ID)-flux(i-1,ID))*dtdx
-           uold(i+imin-1,j,IU)=u(i+imin-1,IU)+(flux(i-2,IU)-flux(i-1,IU))*dtdx
-           uold(i+imin-1,j,IV)=u(i+imin-1,IV)+(flux(i-2,IV)-flux(i-1,IV))*dtdx
-           uold(i+imin-1,j,IP)=u(i+imin-1,IP)+(flux(i-2,IP)-flux(i-1,IP))*dtdx
+        do i=imin+2, imax-2
+           uold(i,j,ID)=u(i,ID)+(flux(i-2,ID)-flux(i-1,ID))*dtdx
+           uold(i,j,IU)=u(i,IU)+(flux(i-2,IU)-flux(i-1,IU))*dtdx
+           uold(i,j,IV)=u(i,IV)+(flux(i-2,IV)-flux(i-1,IV))*dtdx
+           uold(i,j,IP)=u(i,IP)+(flux(i-2,IP)-flux(i-1,IP))*dtdx
         end do
         if(nvar>4)then
            do in = 5,nvar

@@ -20,7 +20,7 @@ CFLAGS = -O3
 
 # Fortran compilation options
 #----------------------------
-FFLAGS = -O3
+FFLAGS = -O3 
 #-traceback -mcmodel=medium -shared-intel -check all
 
 # Linker options
