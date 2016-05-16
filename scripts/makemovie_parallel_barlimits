@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# creates a movie of HYDRO output files named movie.mp4
+# execute in the directory where the outputs are
+
+
+# Get nr of processors used and limits for simulation as cmd line arg, 
+# or complain if you don't.
+if [ "$#" -gt 3 ] || [ "$#" == 0 ] ; then
+    echo "give the number of processors used, lower bar limit and upper bar limit as cmd line args:"
+    echi "makemovie_parallel_barlimits <nproc> <lowerlimit> <upperlimit>"
+    exit
+else
+    nproc="$1"
+    lowerlimit="$2"
+    upperlimit="$3"
+    echo " working with " $nproc "output files per output."
+    echo "Limits are: " $lowerlimit " and " $upperlimit
+fi
+
+
+#check if subdir "picoutput" exists. if not, create it.
+if [ -d "picoutput" ]; then
+    echo "Directory picoutput already exists."
+else
+    mkdir -p picoutput
+    echo "made new dir picoutput"
+fi
+
+
+echo "creating png files"
+for i in output_*.00001; do
+    name=${i:0:12}
+    hydropic_movie_parallel_barlimits "$nproc" "$lowerlimit" "$upperlimit" ./"$name"*
+    #echo ./"$name"*
+done
+echo "png files created"
+
+
+filename="../movie_constant_colorbar.mp4"
+
+#create movie out of png
+echo "creating movie"
+cd picoutput
+ffmpeg_makemovie $filename
+cd ..
+
+echo "done"
+
