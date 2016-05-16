@@ -20,34 +20,18 @@ from sys import argv # command line arguments
 from matplotlib import use
 use('Agg') #don't show anything unless I ask you to. So no need to get graphical all over ssh.
 from matplotlib import pyplot
-
+from matplotlib.colors import LogNorm
 
 nproc = int(argv[1])
-map_files = []
-global_nx=0
 
 print "Reading in files."
 
-#for i in range(0, nproc):
-#    inputfile = str(argv[i+2])
-#    map_files.append(inputfile)
-
-    # read image data: get global nx
-#    f = fortranfile.FortranFile(inputfile)
-#    [t, gamma] = f.readReals()
-#    [nx,ny,nvar,nstep] = f.readInts()
-    #print "nx =", nx
-#    global_nx += nx
-#    f.close()
-
-#data = numpy.array([])
 for i in range(0, nproc):
     inputfile = str(argv[i+2])
-#    print "inputfile", inputfile
     f = fortranfile.FortranFile(inputfile)
     [t, gamma] = f.readReals()
     [nx,ny,nvar,nstep] = f.readInts()
-    temp_data = f.readReals()#.reshape(nvar, ny, nx)
+    temp_data = f.readReals()
     f.close()
     
     temp_data = numpy.array(temp_data)
@@ -57,43 +41,18 @@ for i in range(0, nproc):
     else:
         data = numpy.concatenate((data, temp_data), axis=2)
 
-# create empty data array
-#data=numpy.zeros(nvar*ny*global_nx).reshape(nvar,ny,global_nx)
-#x=0
-# read in values
-#for i in range(0, nproc):
-#    inputfile = map_files[i]
-#    f = fortranfile.FortranFile(inputfile)
-#    [t, gamma] = f.readReals()
-#    [nx,ny,nvar,nstep] = f.readInts()
-#    print "nx", nx, nvar, x
-#    print data.shape
-#    #data[0:nvar,0:ny,x:x+nx] = 
-#    temp_data = f.readReals().reshape(nvar, ny, nx)
-#    for k in range(nx):
-#        for j in range(ny):
-#            data[0,j,k+x] = temp_data[0,j,k]
-#    print "-----------------------------------------------"
-#    print " ID = ", i
-#    print temp_data
-#    x += nx
-#    f.close()
-
-#print "global nx", global_nx
-#print len(data)
-
-#data = numpy.array(data)
-#data = data.reshape(nvar,ny,global_nx)
-
-
 #Plotting
-fig = pyplot.figure(facecolor='white', figsize=(5,5), dpi=150)
+fig = pyplot.figure(facecolor='white', figsize=(8,3), dpi=150)
 ax = fig.add_subplot(1,1,1)
+
+ax.axes.get_xaxis().set_ticks([0, data.shape[2]])
+ax.axes.get_yaxis().set_ticks([0, data.shape[1]])
 
 print "plotting"
 
-im=ax.imshow(data[0,:,:],interpolation='none',cmap='Blues_r') 
+im=ax.imshow(data[0,:,:],interpolation='none',cmap='Blues_r', origin="lower")#, norm=LogNorm()) 
 fig.colorbar(im, fraction=0.046, pad=0.04)
+
 
 workdir = str(getcwd())
 
