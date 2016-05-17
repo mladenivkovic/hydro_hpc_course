@@ -20,7 +20,7 @@ from sys import argv # command line arguments
 from matplotlib import use
 use('Agg') #don't show anything unless I ask you to. So no need to get graphical all over ssh.
 from matplotlib import pyplot
-
+from mpl_toolkits.axes_grid1 import make_axes_locatable, axes_size
 
 map_file = str(argv[1])
 print "input file is: ", map_file
@@ -42,7 +42,13 @@ ax = fig.add_subplot(111, aspect='equal')
 
 print "plotting"
 im=ax.imshow(dat[0,:,:],interpolation='none', vmin=0.0, vmax=10.0, cmap='Blues_r')
-fig.colorbar(im, fraction=0.046, pad=0.04)
+
+# Make colorbar same height as plot
+divider = make_axes_locatable(ax)
+cax = divider.append_axes("right", size="5%", pad=0.05)
+fig.colorbar(im, cax=cax)
+
+pyplot.tight_layout()
 
 workdir = str(getcwd())
 
