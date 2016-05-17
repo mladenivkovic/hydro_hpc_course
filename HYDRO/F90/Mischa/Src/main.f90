@@ -13,7 +13,7 @@ program hydro_main
   implicit none
 
   real(kind=prec_real)   :: dt, tps_elapsed, tps_cpu, t_deb, t_fin
-  integer(kind=prec_int) :: nbp_init, nbp_final, nbp_max, freq_p,i,j, nb_procs, rank, exitcode
+  integer(kind=prec_int) :: nbp_init, nbp_final, nbp_max, freq_p,i,j
 
   ! * MISCHA * Initialize MPI Environment
   call MPI_INIT(exitcode)
