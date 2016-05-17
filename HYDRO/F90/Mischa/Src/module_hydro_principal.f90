@@ -28,6 +28,10 @@ subroutine init_hydro
 
   ! Initial conditions in grid interior
   ! Warning: conservative variables U = (rho, rhou, rhov, E)
+  ! rho: density
+  ! rhov: density * velocity_v
+  ! rhou: density * velocity_u
+  ! E: Energy (temperature, pressure, ...)
 
 !!$  ! Jet
 !!$  do j=jmin+2,jmax-2
