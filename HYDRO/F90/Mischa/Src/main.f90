@@ -27,7 +27,7 @@ program hydro_main
   call cpu_time(t_deb)
 
   ! Read run parameters
-  call read_params
+  call read_params          ! in module_hydro_IO.f90: reads in parameters from file given as command line input 
 
   ! Initialize hydro grid
   call init_hydro

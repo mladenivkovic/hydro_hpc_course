@@ -49,7 +49,7 @@ subroutine init_hydro
         uold(i,j,ID)=1.0
         uold(i,j,IU)=0.0
         uold(i,j,IV)=0.0
-        uold(i,j,IP)=1.d-5
+        uold(i,j,IP)=1.d-5  ! Add pressure
      end do
   end do
   uold(imin+2,jmin+2,IP)=1./dx/dx

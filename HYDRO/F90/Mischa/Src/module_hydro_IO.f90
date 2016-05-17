@@ -24,12 +24,15 @@ subroutine read_params
   namelist/hydro/gamma,courant_factor,smallr,smallc,niter_riemann, &
                  iorder,scheme,slope_type
 
-  narg = iargc()
-  IF(narg .NE. 1)THEN
+  ! Check if the format of the input arguments is correct
+  narg = iargc()        ! get number of command line arguments
+  IF(narg .NE. 1)THEN   ! ensure that there is exactly one command line argument, if not --> error message!
      write(*,*)'You should type: a.out input.nml'
      write(*,*)'File input.nml should contain a parameter namelist'
-     STOP
+     STOP               ! abort
   END IF
+
+  ! Read the arguments stored in the input file
   CALL getarg(1,infile)
   open(1,file=infile)
   read(1,NML=run)
