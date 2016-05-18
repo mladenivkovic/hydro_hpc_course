@@ -72,9 +72,19 @@ subroutine make_boundary(idim)
   else
 
     ! Lower boundary
+    call MPI_COMM_RANK(MPI_COMM_WORLD, rank, exitcode)
 
-    if (rank == nb_procs-1) boundary_down = 1   ! The highest rank processor has to set reflective boundary conditions at its lower boundary
-    else boundary_down = 2                      ! If the processor has not highest rank, its lower boundary condition is outflowing
+    if (rank == nb_procs-1)then
+        boundary_down = 1           ! The highest rank processor has to set reflective boundary conditions at its lower boundary
+    else
+        boundary_down = 2           ! If the processor has not highest rank, its lower boundary condition is outflowing
+        if (rank /= 0)then
+        comm_size = (imax-imin)*2*4
+        MPI_SENDRECV(uold(imin:imax, (ny/3.-2):(ny/3.-1),:), comm_size, MPI_FLOAT, rank+1, tag, &
+                     uold(imin:imax, 0:1,:), comm_size, MPI_FLOAT, rank+1, tag, &
+                     MPI_COMM_WORLD, MPI_STATUS_IGNORE, exitcode)
+        end if
+    end if
 
     do ivar=1,nvar
         do j=1,2           
@@ -109,11 +119,21 @@ subroutine make_boundary(idim)
 !!$        end do
 
      ! Upper boundary
+    call MPI_COMM_RANK(MPI_COMM_WORLD, rank, exitcode)
 
-    if (rank == 0) boundary_up = 1   ! The firts processor has to set reflective boundary conditions at its upper boundary
-    else boundary_down = 2           ! If the processor has not rank 0, its upper boundary condition is outflowing
+    if (rank == 0)then
+        boundary_up = 1           ! The highest rank processor has to set reflective boundary conditions at its lower boundary
+    else
+        boundary_uo = 2           ! If the processor has not highest rank, its lower boundary condition is outflowing
+        if (rank /= nb_procs)then
+            comm_size = (imax-imin)*2*4
+            MPI_SENDRECV(uold(imin:imax, 0:1,:), comm_size, MPI_FLOAT, rank-1, tag, &
+                         uold(imin:imax, (ny/3.-2):(ny/3.-1),:), comm_size, MPI_FLOAT, rank-1, tag, &
+                         MPI_COMM_WORLD, MPI_STATUS_IGNORE, exitcode)
+        end if
+    end if
 
-     do ivar=1,nvar
+    do ivar=1,nvar
         do j=ny+3,ny+4
            sign=1.0
            if(boundary_up==1)then
