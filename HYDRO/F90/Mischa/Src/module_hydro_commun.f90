@@ -1,4 +1,4 @@
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -*- Mode: F90 -*- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -*- Mode: F90 -*- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !! module_hydro_commun.f90 --- 
 !!!!
 !! module hydro_precision
@@ -39,7 +39,7 @@ module hydro_parameters
   real(kind=prec_real)   :: slope_type=1.
   character(LEN=20)      :: scheme='muscl'
   integer(kind=prec_int) :: boundary_right=1
-  integer(kind=prec_int) :: boundary_left =1
+  integer(kind=prec_int) :: boundary_left =1 ! 1 = reflectiv, 2 = open/outflowing, else --> periodic 
   integer(kind=prec_int) :: boundary_down =1
   integer(kind=prec_int) :: boundary_up   =1
   integer(kind=prec_int) :: noutput=100

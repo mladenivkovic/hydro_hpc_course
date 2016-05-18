@@ -71,8 +71,12 @@ subroutine make_boundary(idim)
 
   else
 
-     ! Lower boundary
-     do ivar=1,nvar
+    ! Lower boundary
+
+    if (rank == nb_procs-1) boundary_down = 1   ! The highest rank processor has to set reflective boundary conditions at its lower boundary
+    else boundary_down = 2                      ! If the processor has not highest rank, its lower boundary condition is outflowing
+
+    do ivar=1,nvar
         do j=1,2           
            sign=1.0
            if(boundary_down==1)then
@@ -105,6 +109,10 @@ subroutine make_boundary(idim)
 !!$        end do
 
      ! Upper boundary
+
+    if (rank == 0) boundary_up = 1   ! The firts processor has to set reflective boundary conditions at its upper boundary
+    else boundary_down = 2           ! If the processor has not rank 0, its upper boundary condition is outflowing
+
      do ivar=1,nvar
         do j=ny+3,ny+4
            sign=1.0

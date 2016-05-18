@@ -18,7 +18,7 @@ program hydro_main
   ! * MISCHA * Initialize MPI Environment
   call MPI_INIT(exitcode)
   call MPI_COMM_SIZE(MPI_COMM_WORLD, nb_procs, exitcode)
-  
+
   ! Initialize clock counter
   call system_clock(count_rate=freq_p, count_max=nbp_max)
   call system_clock(nbp_init)

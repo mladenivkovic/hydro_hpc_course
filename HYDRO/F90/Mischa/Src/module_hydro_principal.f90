@@ -56,7 +56,7 @@ subroutine init_hydro
      end do
   end do
 
-  if (rank == 0) uold(imin+2,jmin+2,IP)=1./dx/dx
+  if (rank == 0) uold(imin+2,jmin+2,IP)=1./dx/dx ! Initial bang only in first processor
 
 !!$  ! 1D Sod test
 !!$  do j=jmin+2,jmax-2
