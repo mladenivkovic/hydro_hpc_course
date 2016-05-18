@@ -141,7 +141,7 @@ subroutine godunov(idim,dt)
   ! Update boundary conditions
   call make_boundary(idim)
 
-  if (idim==1)then
+  if (idim==1)then                          ! x-direction / horizontal
      ! Allocate work space for 1D sweeps
      call allocate_work_space(imin,imax,nx+1)
 
@@ -202,21 +202,21 @@ subroutine godunov(idim,dt)
      ! Deallocate work space
      call deallocate_work_space
 
-  else
-
-     ! Allocate work space for 1D sweeps
-     call allocate_work_space(jmin,jmax,ny+1)
-
-     do i=imin+2,imax-2
-        ! Gather conservative variables
-        do j=jmin,jmax
-           u(j,ID)=uold(i,j,ID)
-           u(j,IU)=uold(i,j,IV)
-           u(j,IV)=uold(i,j,IU)
-           u(j,IP)=uold(i,j,IP)
-        end do
-        if(nvar>4)then
-           do in = 5,nvar
+  else                                      ! y-direction / vertical
+                                                                         !    __ __________ __ __
+     ! Allocate work space for 1D sweeps                                 !   |__|__|_______|__|__|
+     call allocate_work_space(jmin,jmax,ny+1)                            !   |__|__|_______|__|__|
+                                                                         !   |__|__|       |__|__|
+     do i=imin+2,imax-2                     ! i counts along y           !   |__|__|   0   |__|__|
+        ! Gather conservative variables                                  !   |__|__|__ __ _|__|__|
+        do j=jmin,jmax                      ! j counts along x           !   |__|__|       |__|__|
+           u(j,ID)=uold(i,j,ID)                                          !   |__|__|   1   |__|__|
+           u(j,IU)=uold(i,j,IV)                                          !   |__|__|__ __ _|__|__|
+           u(j,IV)=uold(i,j,IU)                                          !   |__|__|       |__|__|
+           u(j,IP)=uold(i,j,IP)                                          !   |__|__|   2   |__|__|
+        end do                                                           !   |__|__|_______|__|__|
+        if(nvar>4)then                                                   !   |__|__|_______|__|__|
+           do in = 5,nvar                                                !   |__|__|_______|__|__|
               do j=jmin,jmax
                  u(j,in)=uold(i,j,in)
               end do
