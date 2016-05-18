@@ -18,16 +18,14 @@ program hydro_main
   ! * MISCHA * Initialize MPI Environment
   call MPI_INIT(exitcode)
   call MPI_COMM_SIZE(MPI_COMM_WORLD, nb_procs, exitcode)
-  call MPI_COMM_RANK(MPI_COMM_WORLD, rank, code)
-
-
+  
   ! Initialize clock counter
   call system_clock(count_rate=freq_p, count_max=nbp_max)
   call system_clock(nbp_init)
   call cpu_time(t_deb)
 
   ! Read run parameters
-  call read_params          ! in module_hydro_IO.f90: reads in parameters from file given as command line input 
+  call read_params          ! in module_hydro_IO.f90: reads in parameters from file given as command line input
 
   ! Initialize hydro grid
   call init_hydro

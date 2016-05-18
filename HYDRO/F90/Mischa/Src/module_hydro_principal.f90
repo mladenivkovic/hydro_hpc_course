@@ -23,6 +23,8 @@ subroutine init_hydro
   imax=nx+4
   jmin=1
   jmax=ny+4
+
+  call MPI_COMM_RANK(MPI_COMM_WORLD, rank, exitcode)
   
   allocate(uold(imin:imax,jmin:jmax,1:nvar))
 
@@ -44,15 +46,17 @@ subroutine init_hydro
 !!$  end do
 
   ! Wind tunnel with point explosion
+
   do j=jmin+2,jmax-2
      do i=imin+2,imax-2
         uold(i,j,ID)=1.0
         uold(i,j,IU)=0.0
         uold(i,j,IV)=0.0
-        uold(i,j,IP)=1.d-5  ! Add pressure
+        uold(i,j,IP)=1.d-5
      end do
   end do
-  uold(imin+2,jmin+2,IP)=1./dx/dx
+
+  if (rank == 0) uold(imin+2,jmin+2,IP)=1./dx/dx
 
 !!$  ! 1D Sod test
 !!$  do j=jmin+2,jmax-2
