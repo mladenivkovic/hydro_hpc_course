@@ -28,6 +28,7 @@ subroutine make_boundary(idim)
   ! Local variables
   integer(kind=prec_int) :: ivar,i,i0,j,j0
   real(kind=prec_real)   :: sign
+    integer              :: comm_size
 !!$ integer(kind=prec_int) :: ijet
 !!$ real(kind=prec_real) :: djet,ujet,pjet
 
@@ -124,7 +125,7 @@ subroutine make_boundary(idim)
     if (rank == 0)then
         boundary_up = 1           ! The highest rank processor has to set reflective boundary conditions at its lower boundary
     else
-        boundary_uo = 2           ! If the processor has not highest rank, its lower boundary condition is outflowing
+        boundary_up = 2           ! If the processor has not highest rank, its lower boundary condition is outflowing
         if (rank /= nb_procs)then
             comm_size = (imax-imin)*2*4
             MPI_SENDRECV(uold(imin:imax, 0:1,:), comm_size, MPI_FLOAT, rank-1, tag, &
