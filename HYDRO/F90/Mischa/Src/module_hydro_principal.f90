@@ -88,7 +88,7 @@ subroutine cmpdt(dt)
   real(kind=prec_real), intent(out) :: dt  
   ! Local variables
   integer(kind=prec_int) :: i,j
-  real(kind=prec_real)   :: cournox,cournoy,eken
+  real(kind=prec_real)   :: cournox, cournoy, cournox_all, cournoy_all, eken
   real(kind=prec_real),  dimension(:,:), allocatable   :: q
   real(kind=prec_real),  dimension(:)  , allocatable   :: e,c
 
@@ -116,7 +116,11 @@ subroutine cmpdt(dt)
 
   deallocate(q,e,c)
 
-  dt = courant_factor*dx/max(cournox,cournoy,smallc)
+  ! One needs to consider the maximal value over all cells in the grid.
+  call MPI_ALLREDUCE(cournox, cournox_all, 1, MPI_REAL, MPI_MAX, MPI_COMM_WORLD, exitcode)
+  call MPI_ALLREDUCE(cournoy, cournoy_all, 1, MPI_REAL, MPI_MAX, MPI_COMM_WORLD, exitcode)
+
+  dt = courant_factor*dx/max(cournox_all,cournoy_all,smallc)
 end subroutine cmpdt
 
 
