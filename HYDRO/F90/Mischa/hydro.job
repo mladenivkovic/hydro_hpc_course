@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# NAME:			hydro.job
+# ------------------------------------------------------------------------------------------------------------------------------------------- #
+# FUNCTIONALITY:        This job script runs the hydro code used in the HPC Ib lecture.
+# DESIGNED FOR:         Piz Dora @ CSCS (on account "stud04") - if used somewhere else: adjust the paths correspondingly
+# AUTHOR:               Mischa B. A. Knabenhans
+# DATE:                 May 19, 2016
+# ------------------------------------------------------------------------------------------------------------------------------------------- #
+
+#SBATCH --job-name=pkdgrav
+#SBATCH --ntasks=1 --cpus-per-task=2 --exclusive -p zbox
+
+srun hydro
+
+
+
