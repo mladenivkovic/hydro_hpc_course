@@ -21,6 +21,7 @@ subroutine make_boundary(idim)
   use hydro_commons
   use hydro_const
   use hydro_parameters
+  use mpi
   implicit none
 
   ! Dummy arguments
