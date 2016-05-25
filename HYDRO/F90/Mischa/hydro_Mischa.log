@@ -1,0 +1,148 @@
+commit 3e561bc43e26c3ac93bedd860eb74913e6c71009
+Author: Mischa Knabenhans <mischa.knabenhans@uzh.ch>
+Date:   Wed May 25 00:00:39 2016 +0300
+
+    Included "use mpi" in utils module
+
+commit 3cc503d204898b9e7199a5dba9766669b3e5b4dd
+Author: Mischa Knabenhans <mischa.knabenhans@uzh.ch>
+Date:   Fri May 20 17:15:38 2016 +0200
+
+    Add parallel treatment for tilmestep
+    
+    Since the Courant condition requires to consider the maximum over the
+    entire grid, we need to gather the maxima from all the processes and
+    take the maximum of them:
+    
+    —> MPI_ALLREDUCE
+
+commit c8e789d3c998a0436fa5d577e4508f7bd2790861
+Author: Mischa Knabenhans <mischa.knabenhans@uzh.ch>
+Date:   Fri May 20 17:14:10 2016 +0200
+
+    Undo change
+
+commit 823580f05a68956358f3100e08e006b6bda5122a
+Author: Mischa Knabenhans <mischa.knabenhans@uzh.ch>
+Date:   Fri May 20 16:17:54 2016 +0200
+
+    Debugging: MPI_SENDRECV
+    
+    MPI_SENDRECV on just one line
+
+commit c70d298d5faf0ffd70e0dba8c1c5a6e358e66284
+Merge: d06fee0 4efbd88
+Author: Mischa Knabenhans <mischa.knabenhans@uzh.ch>
+Date:   Fri May 20 16:07:11 2016 +0200
+
+    minor changes
+
+commit d06fee05bd434361759515ab0919a5c76e92639d
+Author: Mischa Knabenhans <mischa.knabenhans@uzh.ch>
+Date:   Thu May 19 18:12:04 2016 +0200
+
+    Corrected some bugs
+    
+    added declaration of comm_size
+
+commit 4efbd8888ed401cdfd5aa35fc20c63b8e57138a4
+Author: Mischa <mischa.knabenhans@uzh.ch>
+Date:   Thu May 19 18:05:25 2016 +0200
+
+    Minor change in header
+
+commit f108993678965317f4def9fd9c9715273e473c5e
+Author: Mischa <mischa.knabenhans@uzh.ch>
+Date:   Thu May 19 18:03:40 2016 +0200
+
+    added commands to hydro.job --> needs further treatment
+
+commit 649ac166dbd31b5104d4e0c16d4eb54b779b2337
+Author: Mischa <mischa.knabenhans@uzh.ch>
+Date:   Thu May 19 17:51:14 2016 +0200
+
+    Initial commit of hydro.job
+
+commit f780c4a9cb8db63d1d440c2ec6581b26e6f3afc4
+Author: Mischa Knabenhans <mischa.knabenhans@uzh.ch>
+Date:   Thu May 19 01:25:06 2016 +0200
+
+    Minor comments
+
+commit 6ba49ab64136656880b9f1b199beae79b1bb2825
+Author: Mischa Knabenhans <mischa.knabenhans@uzh.ch>
+Date:   Wed May 18 15:44:56 2016 +0200
+
+    added MPI_SENDRECV (first attempt)
+
+commit f455a9b11cc1ab8533d31fc2ae05f35d306df204
+Author: Mischa Knabenhans <mischa.knabenhans@uzh.ch>
+Date:   Wed May 18 14:09:02 2016 +0200
+
+    Take care of boundary conditions in MPI environment; added some comments
+
+commit 7107bd6e9d8610c4729c3dc496359f8502175bff
+Author: Mischa Knabenhans <mischa.knabenhans@uzh.ch>
+Date:   Wed May 18 13:34:01 2016 +0200
+
+    Splitting of the domain: Initial bang only in processor 1
+
+commit cb3e673d0bf5843d709115e450114dd8305ab834
+Author: Mischa Knabenhans <mischa.knabenhans@uzh.ch>
+Date:   Wed May 18 01:12:56 2016 +0200
+
+    Added more comments explaining how the code works
+
+commit 95714be4a9ce65fdb7d4087a0f77ffcf635b0309
+Author: Mischa Knabenhans <mischa.knabenhans@uzh.ch>
+Date:   Tue May 17 22:55:20 2016 +0200
+
+    Copy comments from Mladen's version of module_hydro_principal.f90: explanations on variables
+
+commit ee6b86179184a4c48da18a4b1ec86f8fd3ac0a52
+Author: Mischa Knabenhans <mischa.knabenhans@uzh.ch>
+Date:   Tue May 17 22:46:13 2016 +0200
+
+    Added new files; Put MPI variable initialization into hydro_parameters
+
+commit 91ac3bc65617ade592c711b61fd9abbb12ae3c9f
+Author: Mischa Knabenhans <mischa.knabenhans@uzh.ch>
+Date:   Mon May 16 16:58:29 2016 +0200
+
+    Added initialization & finalization of MPI environment
+
+commit a2808f849eb917e4c991d188007e4b9420487236
+Author: Mischa Knabenhans <mischa.knabenhans@uzh.ch>
+Date:   Mon May 16 16:56:11 2016 +0200
+
+    Initial commit of my main.f90; includes MPI initialization and finalization
+
+commit a65eb530a41a7ec3432587a39648d059364fdecb
+Author: Mladen Ivkovic <mladen.ivkovic@uzh.ch>
+Date:   Tue Apr 26 19:18:59 2016 +0200
+
+    adios macosx relics
+
+commit 20b67c2f997126963f0deeb969af38db1b28fd22
+Author: Mladen Ivkovic <mladen.ivkovic@uzh.ch>
+Date:   Tue Apr 26 19:17:37 2016 +0200
+
+    moved everything from HYDRO/HYDRO/HYDRO to HYDRO/HYDRO because three useless directories were really getting on my nerves
+
+commit f7ccd219a3f695c6a0fab20540954013afbdfeaa
+Author: Maria Grazia Giuffreda <stud01@dora104.cm.cluster>
+Date:   Fri Apr 22 14:01:20 2016 +0200
+
+    Contributors updated
+
+commit 492a018a4f3db8753417c246ee3a37ffe3815dcc
+Author: Mladen Ivkovic <mladen.ivkovic@uzh.ch>
+Date:   Fri Apr 22 13:37:21 2016 +0200
+
+    initial commit
+
+commit 4a75e107f400c9d5da91340d3dabcd62362fbd3c
+Author: Mladen Ivkovic <mladen.ivkovic@uzh.ch>
+Date:   Fri Apr 22 13:31:58 2016 +0200
+
+    Initial commit with contributors
