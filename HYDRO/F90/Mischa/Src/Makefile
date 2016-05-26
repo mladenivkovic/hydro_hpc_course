@@ -1,7 +1,7 @@
 # Link make.inc with the targeted architecture in Arch directory
 # For example : ln -s make_sp6 make.inc
 #--------------------------------------
-include ../../../Arch/make.inc
+include ../../../Arch/make_intel
 
 # Sources directories
 #--------------------
@@ -9,9 +9,10 @@ SRCDIR = .
 
 # Objects
 #--------
-OBJ = module_hydro_commun.o module_hydro_IO.o module_hydro_utils.o module_hydro_principal.o main.o
+OBJ = module_hydro_commun.o module_hydro_IO.o module_hydro_utils.o module_hydro_principal.o main.o module_mladen.o
 
-default: mono
+#default: mono
+default: mpi
 
 mono: FCOMP = $(F90)
 mono: FCOMPFLAGS = $(FFLAGS)
@@ -48,12 +49,14 @@ cleanall:
 
 # Dependencies
 #-------------
-main.o : main.f90 module_hydro_principal.o module_hydro_IO.o module_hydro_commun.o
+main.o : main.f90 module_hydro_principal.o module_hydro_IO.o module_hydro_commun.o module_mladen
 
 module_hydro_commun.o : module_hydro_commun.f90
 
-module_hydro_IO.o : module_hydro_IO.f90 module_hydro_commun.o
+module_hydro_IO.o : module_hydro_IO.f90 module_hydro_commun.o module_mladen.o
 
 module_hydro_principal.o : module_hydro_principal.f90 module_hydro_commun.o module_hydro_utils.o
 
-module_hydro_utils.o : module_hydro_utils.f90 module_hydro_commun.o
+module_hydro_utils.o : module_hydro_utils.f90 module_hydro_commun.o module_mladen.o
+
+module_mladen.o: module_mladen.f90 module_hydro_commun.o

@@ -81,11 +81,9 @@ subroutine make_boundary(idim)
     else
         boundary_down = 2           ! If the processor has not highest rank, its lower boundary condition is outflowing
         if (rank /= 0)then
-        comm_size = 2*nx*nvar
-        
-        ! send the last two rows of domain and receive ghost cells 
-        call MPI_SENDRECV(uold(imin:imax, jmax-3:jmax-2,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank+1, 100, &
-                          uold(imin:imax, jmax-1:jmax,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank+1, 200, &
+        comm_size = (imax-imin)*2*4
+        call MPI_SENDRECV(uold(imin:imax, (ny/3.-2):(ny/3.-1),1:4), comm_size, MPI_FLOAT, rank+1, 8, &
+                          uold(imin:imax, 0:1,1:4), comm_size, MPI_FLOAT, rank+1, 8, &
                           MPI_COMM_WORLD, MPI_STATUS_IGNORE, exitcode)
         end if
     end if
