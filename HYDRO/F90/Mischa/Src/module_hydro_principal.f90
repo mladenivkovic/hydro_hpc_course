@@ -18,15 +18,27 @@ subroutine init_hydro
 
   ! Local variables
   integer(kind=prec_int) :: i,j
+  integer(kind=prec_int) :: domainlength_y ! domain separation along y-direction (vertical)
 
-  imin=1
-  imax=nx+4
-  jmin=1
-  jmax=ny+4
+  allocate(imin_global(1:nproc), imax_global(1:nproc), jmin_global(1:nproc), jmax_global(1:nproc))
+
+  domainlength_y = ny/nproc
+  
+  do i = 1, nproc
+    imin_global(i) = 1
+    imax_global(i) = nx + 4
+    jmin_global(i) = 1 + domainlength_y * (i-1)
+    jmax_global(i) = domainlength_y * i + 4
+  end do
 
   call MPI_COMM_RANK(MPI_COMM_WORLD, rank, exitcode)
-  
-  allocate(uold(imin:imax,jmin:jmax,1:nvar))
+
+  imin=imin_global(rank)
+  imax=imax_global(rank)
+  jmin=jmin_global(rank)
+  jmax=jmax_global(rank)
+
+  allocate(uold(1:nx+4,1:ny+4,1:nvar))
 
   ! Initial conditions in grid interior
   ! Warning: conservative variables U = (rho, rhou, rhov, E)
@@ -75,7 +87,6 @@ subroutine init_hydro
 !!$  end do
 
 end subroutine init_hydro
-
 
 subroutine cmpdt(dt)
   use hydro_commons
