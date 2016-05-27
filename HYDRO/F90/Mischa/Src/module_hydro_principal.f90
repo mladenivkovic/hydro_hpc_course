@@ -14,17 +14,19 @@ subroutine init_hydro
   use hydro_commons
   use hydro_const
   use hydro_parameters
+  use mpi
   implicit none
 
   ! Local variables
-  integer(kind=prec_int) :: i,j
-  integer(kind=prec_int) :: domainlength_y ! domain separation along y-direction (vertical)
+  integer(kind=prec_int)                        ::      i,j
+  integer(kind=prec_int)                        ::      domainlength_y ! domain separation along y-direction (vertical)
+  real(kind=prec_real),allocatable,dimension(:) ::      imin_global, imax_global, jmin_global, jmax_global
 
-  allocate(imin_global(1:nproc), imax_global(1:nproc), jmin_global(1:nproc), jmax_global(1:nproc))
+  allocate(imin_global(1:nb_procs), imax_global(1:nb_procs), jmin_global(1:nb_procs), jmax_global(1:nb_procs))
 
-  domainlength_y = ny/nproc
+  domainlength_y = ny/nb_procs
   
-  do i = 1, nproc
+  do i = 1, nb_procs
     imin_global(i) = 1
     imax_global(i) = nx + 4
     jmin_global(i) = 1 + domainlength_y * (i-1)
@@ -128,8 +130,8 @@ subroutine cmpdt(dt)
   deallocate(q,e,c)
 
   ! One needs to consider the maximal value over all cells in the grid.
-  call MPI_ALLREDUCE(cournox, cournox_all, 1, MPI_REAL, MPI_MAX, MPI_COMM_WORLD, exitcode)
-  call MPI_ALLREDUCE(cournoy, cournoy_all, 1, MPI_REAL, MPI_MAX, MPI_COMM_WORLD, exitcode)
+  call MPI_ALLREDUCE(cournox, cournox_all, 1, MPI_DOUBLE_PRECISION, MPI_MAX, MPI_COMM_WORLD, exitcode)
+  call MPI_ALLREDUCE(cournoy, cournoy_all, 1, MPI_DOUBLE_PRECISION, MPI_MAX, MPI_COMM_WORLD, exitcode)
 
   dt = courant_factor*dx/max(cournox_all,cournoy_all,smallc)
 end subroutine cmpdt

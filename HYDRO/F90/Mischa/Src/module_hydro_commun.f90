@@ -50,7 +50,6 @@ module hydro_parameters
   integer                :: nb_procs    ! number of processors used in the MPI communicator
   integer                :: rank        ! Processor ID
   integer                :: exitcode    ! Error exit code
-
 end module hydro_parameters
 
 module hydro_const
