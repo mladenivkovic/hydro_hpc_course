@@ -21,10 +21,10 @@ fi
 
 #check if subdir "picoutput" exists. if not, create it.
 if [ -d "picoutput" ]; then
-    echo "Directory picoutput already exists."
+    echo "Directory picoutput_parallel_samecolorbar already exists."
 else
-    mkdir -p picoutput
-    echo "made new dir picoutput"
+    mkdir -p picoutput_parallel_samecolorbar
+    echo "made new dir picoutput_parallel_samecolorbar"
 fi
 
 
@@ -41,7 +41,7 @@ filename="../movie_constant_colorbar.mp4"
 
 #create movie out of png
 echo "creating movie"
-cd picoutput
+cd picoutput_parallel_samecolorbar
 ffmpeg_makemovie $filename
 cd ..
 

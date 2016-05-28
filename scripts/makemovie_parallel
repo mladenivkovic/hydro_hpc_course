@@ -17,10 +17,10 @@ fi
 
 #check if subdir "picoutput" exists. if not, create it.
 if [ -d "picoutput" ]; then
-    echo "Directory picoutput already exists."
+    echo "Directory picoutput_parallel already exists."
 else
-    mkdir -p picoutput
-    echo "made new dir picoutput"
+    mkdir -p picoutput_parallel
+    echo "made new dir picoutput_parallel"
 fi
 
 
@@ -35,7 +35,7 @@ echo "png files created"
 
 #create movie out of png
 echo "creating movie"
-cd picoutput
+cd picoutput_parallel
 ffmpeg_makemovie
 cd ..
 
