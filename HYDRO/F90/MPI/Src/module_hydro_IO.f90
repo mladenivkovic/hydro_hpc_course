@@ -47,15 +47,17 @@ subroutine read_params
   call MPI_COMM_RANK(MPI_COMM_WORLD, myid, exitcode)
   myid = myid+1
 
+
   call writetoscreen('#################################')
   call writetoscreen('######      HYDRO CODE     ######')
   call writetoscreen('#################################')
 
-
   !other init stuff
   call makedir('hydro_output')
-  call writeruninfo()
   call MPI_BARRIER(MPI_COMM_WORLD, exitcode)
+  ! so that no file will start writing into a directory that doesn't exist yet
+
+
 end subroutine read_params
 
 
@@ -77,8 +79,8 @@ subroutine output
   filename='hydro_output/output_'//TRIM(char)//'.'//TRIM(charpe)
   open(10,file=filename,form='unformatted')
   rewind(10)
-  write(message, *) 'Outputting array of size=',imax-imin-3,ny_global,nvar
-  call writetoscreen(TRIM(message))
+  !write(*, *) 'Outputting array of size=',imax-imin-3,jmax-jmin-3,nvar
+  call writetoscreen("Writing output.")
   write(10)real(t,kind=prec_output),real(gamma,kind=prec_output)
   write(10) imax-imin-3,ny,nvar,nstep
   write(10)real(uold(imin+2:imax-2,jmin+2:jmax-2,1:nvar),kind=prec_output)

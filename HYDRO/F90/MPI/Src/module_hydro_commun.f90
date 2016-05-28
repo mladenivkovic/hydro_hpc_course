@@ -53,6 +53,15 @@ module hydro_parameters
   integer :: exitcode
   integer :: myid
   integer :: nproc
+  integer :: nproc_x=1, nproc_y=1 !processors assigned to each axis
+  !calculating least communication
+  real :: lattency = 0.001
+  real :: real_datasize=64.0
+  real :: communication_speed=100000.0
+  ! processor map
+  integer :: leftofme, rightofme, aboveme, belowme
+  integer :: wall=0
+
 end module hydro_parameters
 
 module hydro_const

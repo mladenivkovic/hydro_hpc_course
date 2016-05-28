@@ -32,7 +32,7 @@ program hydro_main
 
 
   call writetoscreen(' ')
-  write(message, *) 'Starting time integration, nx = ',nx_global,' ny = ',ny_global  
+  write(message, *) 'Starting time integration, nx = ',nx,' ny = ',ny  
   call writetoscreen(TRIM(message))
   call writetoscreen(' ')
   ! Main time loop

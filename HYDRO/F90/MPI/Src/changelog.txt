@@ -25,8 +25,12 @@ with corrected offset of imin and imax.
 
 It finally seems to work. Off to boundaries then!
 
-TO DO:
-	- Parallelisation:
-		- split domain, set boundaries
-		- timestep
-		- handle parallel output
+2016-05-28
+Forgot to log in here.
+Domain splitting works for x-axis now perfectly.
+Working on splitting in y-direction as well!
+
+Work share in both dimensions seem to work, need to be tested though.
+Will test them tomorrow, will have to adapt the makemovie-scripts
+first.
+

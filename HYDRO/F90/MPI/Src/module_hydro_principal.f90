@@ -14,41 +14,69 @@ subroutine init_hydro
   use hydro_commons
   use hydro_const
   use hydro_parameters
+  use mladen
+  use mpi
   implicit none
 
   ! Local variables
   integer(kind=prec_int) :: i,j
-  integer(kind=prec_int) :: domainwidth_x
+  integer(kind=prec_int) :: domainwidth_x, domainwidth_y
 
-  allocate(imin_global(1:nproc), imax_global(1:nproc), jmin_global(1:nproc), jmax_global(1:nproc))
+  !get best value for processors in x and y direction
+  call distribute_processors(nproc_x, nproc_y) !module_mladen
+  call writeruninfo() !module_mladen
+
+  !get processor map /get neighbours
+  call create_procmap()
 
 
-  ! Assigning domain width to each processor
-  ! TODO: the same for y direction (jmin, jmax)
 
-  domainwidth_x = nx/nproc
+  allocate(imin_global(1:nproc_x), imax_global(1:nproc_x), jmin_global(1:nproc_y), jmax_global(1:nproc_y))
 
-  do i = 1, nproc
-    imax_global(i) = domainwidth_x * i + 4
-    imin_global(i) = 1 + domainwidth_x * (i-1)
-    jmin_global(i) = 1
-    jmax_global(i) = ny + 4
+  !distribute processors optimally  along the domain: 
+  ! Assigning indices imin, imax, jmin, jmax to all processors.
+  ! First get "mean domain width" by division, then fill up
+  ! unassigned cells to processors starting with the last one.
+  domainwidth_x = nx/nproc_x
+  domainwidth_y = ny/nproc_y
+
+  do i=1, nproc_x
+      imax_global(i) = domainwidth_x * i + 4
+      imin_global(i) = 1 + domainwidth_x * (i-1)
   end do
 
-! if there is rest of the division, distribute 1 row of cells per processor starting with the last proc
-  if(mod(nx, nproc) /= 0) then
-    do i = 0, mod(nx, nproc)-1
-      imax_global(nproc - i) = imax_global(nproc - i) + mod(nx, nproc) - i
-      imin_global(nproc - i) = imin_global(nproc - i) + mod(nx, nproc) - 1 - i
+  do j=1, nproc_y
+    jmin_global(j) =1 + domainwidth_y*(j-1)
+    jmax_global(j) =domainwidth_y*j + 4
+  end do
+
+! if there is rest of the division, distribute 1 row of cells per processor starting with the last processor row resp. column
+  if(mod(nx, nproc_x) /= 0) then
+    do i = 0, mod(nx, nproc_x)-1
+      imax_global(nproc_x - i) = imax_global(nproc_x - i) + mod(nx, nproc_x) - i
+      imin_global(nproc_x - i) = imin_global(nproc_x - i) + mod(nx, nproc_x) - 1 - i
     end do
   end if
-  
 
-  imin=imin_global(myid)
-  imax=imax_global(myid)
-  jmin=jmin_global(myid)
-  jmax=jmax_global(myid)
+  if(mod(ny, nproc_y) /= 0) then
+    do i = 0, mod(nx, nproc_y)-1
+      jmax_global(nproc_y - i) = jmax_global(nproc_y - i) + mod(nx, nproc_y) - i
+      jmin_global(nproc_y - i) = jmin_global(nproc_y - i) + mod(nx, nproc_y) - 1 - i
+    end do
+  end if
 
+  do i=1, nproc_x
+    do j=1, nproc_y
+      if(myid==i+(j-1)*nproc_x) then
+        imin=imin_global(i)
+        imax=imax_global(i)
+        jmin=jmin_global(j)
+        jmax=jmax_global(j)
+      end if
+    end do
+  end do
+
+ 
   allocate(uold(1:nx+4, 1:ny+4, 1:nvar))
 
   ! Initial conditions in grid interior
@@ -176,7 +204,7 @@ subroutine godunov(idim,dt)
 
   if (idim==1)then
      ! Allocate work space for 1D sweeps
-     call allocate_work_space(imin,imax,nx+5)
+     call allocate_work_space(imin,imax,nx+1)
 
      do j=jmin+2,jmax-2
         ! Gather conservative variables
@@ -264,7 +292,7 @@ subroutine godunov(idim,dt)
         call trace(q,dq,c,qxm,qxp,dtdx)
 
         do in = 1, nvar
-           do j = 1, ny+1
+           do j = jmin, jmax-3
               qleft (j,in)=qxm(j+1,in)
               qright(j,in)=qxp(j+2,in)
            end do
