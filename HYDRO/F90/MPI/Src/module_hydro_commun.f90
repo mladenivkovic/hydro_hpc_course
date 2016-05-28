@@ -47,7 +47,6 @@ module hydro_parameters
   integer(kind=prec_int) :: noutput=100
   integer(kind=prec_int) :: nstepmax=1000000
   logical                :: on_output=.true.
-  integer(kind=prec_int) :: nx_global, ny_global
 
   !!!
   !!! MPI - stuff

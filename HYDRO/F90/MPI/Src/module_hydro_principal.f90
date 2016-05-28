@@ -26,8 +26,6 @@ subroutine init_hydro
   ! Assigning domain width to each processor
   ! TODO: the same for y direction (jmin, jmax)
 
-  nx_global=nx
-  ny_global=ny
   domainwidth_x = nx/nproc
 
   do i = 1, nproc
@@ -52,7 +50,7 @@ subroutine init_hydro
   jmax=jmax_global(myid)
 
   allocate(uold(1:nx+4, 1:ny+4, 1:nvar))
-  
+
   ! Initial conditions in grid interior
   ! Warning: conservative variables U = (rho, rhou, rhov, E)
   ! rho: density

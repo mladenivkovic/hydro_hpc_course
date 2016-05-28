@@ -54,6 +54,7 @@ subroutine read_params
 
   !other init stuff
   call makedir('hydro_output')
+  call writeruninfo()
   call MPI_BARRIER(MPI_COMM_WORLD, exitcode)
 end subroutine read_params
 
