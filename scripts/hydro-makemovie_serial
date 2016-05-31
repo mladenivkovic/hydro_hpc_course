@@ -20,7 +20,7 @@ done
 
 #create movie out of png
 cd picoutput
-ffmpeg_makemovie
+hydro-ffmpeg_makemovie
 cd ..
 
 echo "done"
