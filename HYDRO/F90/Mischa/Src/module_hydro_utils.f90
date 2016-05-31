@@ -134,13 +134,8 @@ subroutine make_boundary(idim)
 
             ! send the first two rows of domain and receive ghost cells 
             call MPI_SENDRECV(uold(imin:imax, jmin+2:jmin+3,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank+1, 100, &
-<<<<<<< 53ac1d4f63b6b6ea6edfc4de78218dcb1556140e
                               uold(imin:imax, jmin:jmin+1,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank+1, 200, &
                               MPI_COMM_WORLD, MPI_STATUS_IGNORE, exitcode)   
-=======
-                         uold(imin:imax, jmin:jmin+1,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank+1, 200, &
-                         MPI_COMM_WORLD, MPI_STATUS_IGNORE, exitcode)
->>>>>>> Some changes in the MPI_SENDRECV command (inspired by Mladen)
         end if
     end if
 
