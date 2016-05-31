@@ -12,7 +12,7 @@ program hydro_main
 
   implicit none
 
-  real(kind=prec_real)   :: dt, tps_elapsed, tps_cpu, t_deb, t_fin
+  real(kind=prec_real)   :: dt, dt_all, tps_elapsed, tps_cpu, t_deb, t_fin
   integer(kind=prec_int) :: nbp_init, nbp_final, nbp_max, freq_p,i,j
 
   ! * MISCHA * Initialize MPI Environment
@@ -46,6 +46,9 @@ program hydro_main
      if(MOD(nstep,2)==0)then
         call cmpdt(dt)
         if(nstep==0)dt=dt/2.
+
+        call MPI_ALLREDUCE(dt, dt_all, 1, MPI_DOUBLE_PRECISION, MPI_MIN, MPI_COMM_WORLD, exitcode)
+
      endif
 
      ! Directional splitting
