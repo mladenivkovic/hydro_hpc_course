@@ -1,0 +1,14 @@
+# what git should ignore
+
+output_*
+*.png
+*.mp4
+hydro_mono
+*.pyc
+*.o
+*.mod
+hydro_mpi
+run*.log
+slurm*.out
+HYDRO/F90/MonoRef/Src/hydro_mono/*
+
