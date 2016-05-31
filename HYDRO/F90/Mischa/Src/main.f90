@@ -20,6 +20,13 @@ program hydro_main
   call MPI_INIT(exitcode)
   call MPI_COMM_SIZE(MPI_COMM_WORLD, nb_procs, exitcode)
 
+  call writetoscreen('##################################################')
+  call writetoscreen('###           H Y D R O   C O D E              ###')
+  call writetoscreen('##################################################')
+
+  call makedir('hydro_output')
+  call MPI_BARRIER(MPI_COMM_WORLD, exitcode)
+
   ! Initialize clock counter
   call system_clock(count_rate=freq_p, count_max=nbp_max)
   call system_clock(nbp_init)

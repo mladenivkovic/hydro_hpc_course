@@ -11,11 +11,15 @@ contains
 
 subroutine read_params
   use hydro_parameters
+  use mladen
+  use mpi
+
   implicit none
 
   ! Local variables
   integer(kind=prec_int) :: narg,iargc
   character(LEN=80) :: infile
+  character(LEN=80) :: message
 
   ! Namelists
   namelist/run/nstepmax,tend,noutput,on_output
@@ -45,20 +49,23 @@ end subroutine read_params
 subroutine output
   use hydro_commons
   use hydro_parameters
+  use mladen
   implicit none
 
   ! Local variables
   character(LEN=80) :: filename
   character(LEN=5)  :: char,charpe
   integer(kind=prec_int) :: nout,MYPE=0
+  character(len=100) :: message
 
   nout=nstep/noutput
   call title(nout,char)
   call title(MYPE,charpe)
-  filename='output_'//TRIM(char)//'.'//TRIM(charpe)
+  filename='hydro_output/output_'//TRIM(char)//'.'//TRIM(charpe)
   open(10,file=filename,form='unformatted')
   rewind(10)
-  print*,'Outputting array of size=',nx,ny,nvar
+  !print*,'Outputting array of size=',nx,ny,nvar
+  call writetoscreen("Writing output")
   write(10)real(t,kind=prec_output),real(gamma,kind=prec_output)
   write(10)nx,ny,nvar,nstep
   write(10)real(uold(imin+2:imax-2,jmin+2:jmax-2,1:nvar),kind=prec_output)
