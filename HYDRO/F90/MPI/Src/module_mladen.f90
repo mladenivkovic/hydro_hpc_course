@@ -14,6 +14,7 @@ module mladen
 contains 
 
 subroutine writetoscreen(message)
+    !write message to screen. Only one processor does that.
     use hydro_parameters, only: myid
     implicit none
     character(len=*), intent(in), optional :: message
@@ -97,6 +98,8 @@ end subroutine writeruninfo
 
 
 subroutine communicate_boundaries(idim)
+! communicates the boundaries between the processors.
+! It copies the "real values" into the corresponding "ghost cells".
     use hydro_commons
     use hydro_parameters
     use mpi
@@ -104,10 +107,6 @@ subroutine communicate_boundaries(idim)
     integer, intent(in) :: idim
     integer, dimension(MPI_STATUS_SIZE) :: status
 
-    !domain start=imin+2
-    !domain end=imax-2
-
- 
 if(idim==1) then !communicate boundaries in x direction
 
     ! WARNING! MYID = RANK + 1 !!!!!
@@ -117,7 +116,6 @@ if(idim==1) then !communicate boundaries in x direction
         call MPI_SENDRECV(uold(imax-3:imax-2,jmin:jmax,1:nvar), 2*(jmax-jmin+1)*nvar, MPI_DOUBLE_PRECISION, rightofme-1, 100, uold(imax-1:imax,jmin:jmax,1:nvar), 2*(jmax-jmin+1)*nvar, MPI_DOUBLE_PRECISION, rightofme-1, 200, MPI_COMM_WORLD, status, exitcode)
     end if
 
-
     ! send cells left of domain, receive ghost cells that go into
     ! start of domain
     if (leftofme/=wall) then
@@ -125,13 +123,7 @@ if(idim==1) then !communicate boundaries in x direction
     end if
 
 
-
-
-
 else    !communicate boudaries in y direction
-
-
-
 
 
     ! send cells on top of the domain, receive ghost cells that go 
@@ -165,6 +157,7 @@ end subroutine communicate_boundaries
 
 
 subroutine makewall(boundary)
+! Creates a wall boundary condition.
 ! 1: left
 ! 2: right
 ! 3: upper
@@ -175,7 +168,7 @@ subroutine makewall(boundary)
     use hydro_const
     implicit none
     integer, intent(in) :: boundary
-    integer :: i, j, ivar, sign
+    integer :: i, j, ivar, sign, j0
 
 ! make left wall
 if (boundary==1) then
@@ -185,7 +178,7 @@ if (boundary==1) then
             sign=1.0
             if (ivar==IU)sign=-1.0
             do j=jmin+2, jmax-2
-                uold(i+imin-1, j, ivar)=uold(imin+4-i, j, ivar)*sign
+                uold(imin+i-1, j, ivar)=uold(imin+4-i, j, ivar)*sign
             end do
         end do
     end do
@@ -200,7 +193,7 @@ if (boundary==2) then
             sign=1.0
             if(ivar==IU)sign=-1.0
             do j=jmin+2, jmax-2
-                uold(imax-2+i,j, ivar)=uold(imax-1-i,j,ivar)*sign
+                uold(imax+1-i,j, ivar)=uold(imax-4+i,j,ivar)*sign
             end do
         end do
     end do
@@ -210,15 +203,16 @@ end if
 
 !make upper wall
 if (boundary==3) then
-    do ivar=1, nvar
+    do ivar=1,nvar
         do j=1,2
-            sign=1.0
-            if(ivar==IV)sign=-1.0
-            do i=imin+2, imax-2
-                uold(i,jmax-2+j,ivar)=uold(i,jmax-1-j,ivar)*sign
-            end do
+           sign=1.0
+           if(ivar==IV)sign=-1.0
+           do i=imin+2,imax-2
+              uold(i,jmax+1-j,ivar)=uold(i,jmax-4+j,ivar)*sign
+           end do
         end do
     end do
+
 end if
 
 
@@ -229,7 +223,7 @@ if (boundary==4) then
             sign=1.0
             if(ivar==IV)sign=-1.0
             do i=imin+2, imax-2
-                uold(i,jmin+j-1,ivar)=uold(i,jmin+4-i,ivar)*sign
+                uold(i,jmin-1+j,ivar)=uold(i,jmin+4-j,ivar)*sign
             end do
         end do
     end do
@@ -246,6 +240,7 @@ end subroutine makewall
 
 
 subroutine distribute_processors(nproc_x, nproc_y)
+    !decides how many processors are to be used in x and y direction.
     use hydro_parameters
     implicit none
     integer, intent(out) :: nproc_x, nproc_y
@@ -296,6 +291,7 @@ end subroutine distribute_processors
 
 
 real function calculate_communications(proc_x, proc_y)
+    !calculates the communication time for given processor distribution.
     use hydro_parameters
     implicit none
     integer, intent(in) :: proc_x, proc_y
@@ -329,7 +325,16 @@ end function calculate_communications
 
 
 subroutine create_procmap()
-
+    !Tells each processors who their neighbours to the left, 
+    !to the right, above and below are, or if there is a wall.
+    !Processors are mapped in the following way:
+    !myid=1 is always the lower left corner
+    !with nproc_x = 3 and nproc_y = 4:
+    !10 11  12
+    !7  8   9
+    !4  5   6
+    !1  2   3
+    !
     use hydro_parameters
     implicit none
     integer :: i, j
@@ -337,22 +342,22 @@ subroutine create_procmap()
 
 
 
- do i=1, nproc_x
-        if (myid==i) aboveme=wall ! create upper wall
-        if (myid==nproc-i+1) belowme=wall !create lower wall
+    do i=1, nproc_x
+        if (myid==i) belowme=wall ! create upper wall
+        if (myid==nproc-i+1) aboveme=wall !create lower wall
         do j=1, nproc_y
 
             if (myid==1+(j-1)*nproc_x) leftofme=wall !create left wall
             if (myid==nproc_x+(j-1)*nproc_x) rightofme=wall !create right wall
 
-            !get neighbours above
-            if (j /= 1) then
-                if (myid==i+(j-1)*nproc_x) aboveme=i+(j-2)*nproc_x 
-            end if
-
             !get neighbours below
+            !if (j /= nproc_y) then
+                if (myid==i+j*nproc_x) belowme=i+(j-1)*nproc_x
+            !end if
+
+            !get neighbours above
             if (j/=nproc_y) then 
-                if (myid==i+(j-1)*nproc_x) belowme=i+j*nproc_x 
+                if (myid==i+(j-1)*nproc_x)  aboveme=i+j*nproc_x 
             end if
 
             !get neighbours to the right 

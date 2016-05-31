@@ -29,7 +29,15 @@ subroutine init_hydro
   !get processor map /get neighbours
   call create_procmap()
 
-
+  do i = 1, nproc
+    if (myid==i) then
+    write(*, *) "Myid", myid
+    write(*, *) "leftofme", leftofme, "rightofme", rightofme
+    write(*, *) "above me", aboveme, "below me", belowme
+    write(*, *)
+    end if
+    call MPI_BARRIER(MPI_COMM_WORLD, exitcode)
+  end do
 
   allocate(imin_global(1:nproc_x), imax_global(1:nproc_x), jmin_global(1:nproc_y), jmax_global(1:nproc_y))
 

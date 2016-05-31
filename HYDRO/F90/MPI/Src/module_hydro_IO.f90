@@ -82,7 +82,7 @@ subroutine output
   !write(*, *) 'Outputting array of size=',imax-imin-3,jmax-jmin-3,nvar
   call writetoscreen("Writing output.")
   write(10)real(t,kind=prec_output),real(gamma,kind=prec_output)
-  write(10) imax-imin-3,ny,nvar,nstep
+  write(10) imax-imin-3,jmax-jmin-3,nvar,nstep
   write(10)real(uold(imin+2:imax-2,jmin+2:jmax-2,1:nvar),kind=prec_output)
   close(10)
 
