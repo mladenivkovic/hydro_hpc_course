@@ -14,6 +14,7 @@ subroutine init_hydro
   use hydro_commons
   use hydro_const
   use hydro_parameters
+  ! use mladen (not used when domains are only splitted in one direction)
   use mpi
   implicit none
 
