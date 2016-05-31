@@ -33,9 +33,6 @@ subroutine make_boundary(idim)
 !!$ real(kind=prec_real) :: djet,ujet,pjet
 
 
-write(*, *) "idim", idim, "myid", myid, "L", leftofme, "R", rightofme
-write(*, *) "idim", idim, "myid", myid, "U", aboveme, "B", belowme
-
 
   if(idim==1)then
 
