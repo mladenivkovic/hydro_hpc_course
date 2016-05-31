@@ -1,0 +1,36 @@
+What has been done so far:
+
+
+2016-05-08 	
+Implemented my own module to contain my subroutines
+
+2016-05-09 	
+The output will now be written to a subdirectory that
+is called "hydro_output"
+Initiated MPI. Makefile changed accordingly.
+
+2016-05-09-10
+Worked on domain splitting and boudaries. Didn't work out. Reset.
+Time step taken care of.
+
+2016-05-11
+Written an MPI dummy routine to communicate boundaries.
+Now it works, even though probably not most elegant way
+to do things.
+Should be able to more or less copy-paste it into the code.
+
+Working on domain splitting and boundaries again.
+Going through the whole code replacing loops over i 
+with corrected offset of imin and imax.
+
+It finally seems to work. Off to boundaries then!
+
+2016-05-28
+Forgot to log in here.
+Domain splitting works for x-axis now perfectly.
+Working on splitting in y-direction as well!
+
+Work share in both dimensions seem to work, need to be tested though.
+Will test them tomorrow, will have to adapt the makemovie-scripts
+first.
+
