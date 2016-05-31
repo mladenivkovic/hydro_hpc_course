@@ -7,13 +7,14 @@ program hydro_main
   use hydro_parameters
   use hydro_IO
   use hydro_principal
-
+  use mladen
   use mpi
 
   implicit none
 
   real(kind=prec_real)   :: dt, dt_all, tps_elapsed, tps_cpu, t_deb, t_fin
   integer(kind=prec_int) :: nbp_init, nbp_final, nbp_max, freq_p,i,j
+  character(len=100)     :: message, c
 
   ! * MISCHA * Initialize MPI Environment
   call MPI_INIT(exitcode)
@@ -30,9 +31,10 @@ program hydro_main
   ! Initialize hydro grid
   call init_hydro
 
-  print *
-  print *,' Starting time integration, nx = ',nx,' ny = ',ny  
-  print *
+  call writetoscreen(' ')
+  write (message, *),' Starting time integration, nx = ',nx,' ny = ',ny  
+  call writetoscreen(TRIM(message))
+  call writetoscreen(' ')
 
   ! Main time loop
   do while (t < tend .and. nstep < nstepmax)
@@ -62,7 +64,8 @@ program hydro_main
 
      nstep=nstep+1
      t=t+dt
-     write(*,'("step=",I6," t=",1pe10.3," dt=",1pe10.3)')nstep,t,dt
+     write(message,'("step=",I6," t=",1pe10.3," dt=",1pe10.3)')nstep,t,dt_all
+     call writetoscreen(message)
 
   end do
 
@@ -78,10 +81,10 @@ program hydro_main
   else
      tps_elapsed=real(nbp_final-nbp_init+nbp_max)/real(freq_p) 
   endif  
-  print *
-  print *,'Temps CPU (s.)     : ',tps_cpu
-  print *,'Temps elapsed (s.) : ',tps_elapsed
-  print *
+  
+  call writetoscreen(' ')
+  write (message, *) 'Temps CPU (s.)     : ',tps_cpu, NEW_LINE(C), 'Temps elapsed (s.) : ',tps_elapsed
+  call writetoscreen(TRIM(message))
 
   ! * MISCHA * Finalize MPI Environment
   call MPI_FINALIZE(exitcode)
