@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#SBATCH --job-name=hydro
+#SBATCH -n 2 -t 00:05:00
+#SBATCH -p debug
+
+
 # NAME:			hydro.job
 # ------------------------------------------------------------------------------------------------------------------------------------------- #
 # FUNCTIONALITY:        This job script runs the hydro code used in the HPC Ib lecture.
@@ -8,10 +13,8 @@
 # DATE:                 May 19, 2016
 # ------------------------------------------------------------------------------------------------------------------------------------------- #
 
-#SBATCH --job-name=pkdgrav
-#SBATCH --ntasks=1 --cpus-per-task=2 --exclusive -p zbox
-
-srun hydro_mpi /home/ics/mischak/hydro/HYDRO/Input/input_sedov_10000x10000.nml
+export DATE=`date +%F_%Hh%M`
+srun ./hydro_mpi /home/ics/mischak/hydro/HYDRO/Input/input_sedov_100x100.nml > run$DATE.log
 
 
 

@@ -19,7 +19,8 @@ program hydro_main
   ! * MISCHA * Initialize MPI Environment
   call MPI_INIT(exitcode)
   call MPI_COMM_SIZE(MPI_COMM_WORLD, nb_procs, exitcode)
-
+  call MPI_COMM_RANK(MPI_COMM_WORLD, rank, exitcode)
+  
   call writetoscreen('##################################################')
   call writetoscreen('###           H Y D R O   C O D E              ###')
   call writetoscreen('##################################################')
@@ -37,6 +38,14 @@ program hydro_main
 
   ! Initialize hydro grid
   call init_hydro
+
+
+  if(rank==0) then
+        open(10, file='hydro_output/hydro_runinfo.txt', form='formatted')
+        write(10, '(A1, 5A8)') "#", "nx", "ny", "nproc", "nproc_x", "nproc_y"
+        write(10, '(x, 5I8)') nx, ny, nb_procs, 1, nb_procs
+        close(10)
+  end if
 
   call writetoscreen(' ')
   write (message, *),' Starting time integration, nx = ',nx,' ny = ',ny  
@@ -70,7 +79,7 @@ program hydro_main
      end if
 
      nstep=nstep+1
-     t=t+dt
+     t=t+dt_all
      write(message,'("step=",I6," t=",1pe10.3," dt=",1pe10.3)')nstep,t,dt_all
      call writetoscreen(message)
 

@@ -17,7 +17,7 @@ module hydro_commons
   use hydro_precision
   integer(kind=prec_int) :: imin,imax,jmin,jmax
   real(kind=prec_real),allocatable,dimension(:,:,:) :: uold
-  real(kind=prec_real)   :: t=0.
+  real(kind=prec_real)   :: t=0.0
   integer(kind=prec_int) :: nstep=0
 end module hydro_commons
 

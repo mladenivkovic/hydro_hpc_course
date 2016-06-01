@@ -34,7 +34,7 @@ subroutine init_hydro
     jmax_global(i) = domainlength_y * i + 4
   end do
 
-  call MPI_COMM_RANK(MPI_COMM_WORLD, rank, exitcode)
+  !call MPI_COMM_RANK(MPI_COMM_WORLD, rank, exitcode)
 
   imin=imin_global(rank)
   imax=imax_global(rank)

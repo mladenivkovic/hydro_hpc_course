@@ -125,7 +125,7 @@ subroutine make_boundary(idim)
         boundary_up = 1           ! The highest rank processor has to set reflective boundary conditions at its lower boundary
     else
         boundary_up = 2           ! If the processor has not highest rank, its lower boundary condition is outflowing
-        if (rank /= nb_procs)then
+        if (rank /= nb_procs-1)then
             comm_size = 2*nx*nvar
 
             ! send the first two rows of domain and receive ghost cells 
