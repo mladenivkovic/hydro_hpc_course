@@ -36,10 +36,10 @@ subroutine init_hydro
 
   !call MPI_COMM_RANK(MPI_COMM_WORLD, rank, exitcode)
 
-  imin=imin_global(rank)
-  imax=imax_global(rank)
-  jmin=jmin_global(rank)
-  jmax=jmax_global(rank)
+  imin=imin_global(rank+1)
+  imax=imax_global(rank+1)
+  jmin=jmin_global(rank+1)
+  jmax=jmax_global(rank+1)
 
   allocate(uold(1:nx+4,1:ny+4,1:nvar))
 

@@ -78,14 +78,14 @@ subroutine make_boundary(idim)
         boundary_down = 1           ! The highest rank processor has to set reflective boundary conditions at its lower boundary
     else
         boundary_down = 2           ! If the processor has not highest rank, its lower boundary condition is outflowing
-        if (rank /= 0)then
-        comm_size = 2*nx*nvar
+        !if (rank /= 0)then
+            comm_size = 2*nx*nvar   ! 2 lines of ghost cells, nx cells per line, each cell contains nvar numbers
         
-        ! send the last two rows of domain and receive ghost cells 
-        call MPI_SENDRECV(uold(imin:imax, jmax-3:jmax-2,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank-1, 100, &
-                          uold(imin:imax, jmax-1:jmax,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank-1, 200, &
-                          MPI_COMM_WORLD, MPI_STATUS_IGNORE, exitcode)
-        end if
+            ! send the last two rows of domain and receive ghost cells 
+            call MPI_SENDRECV(uold(imin:imax, jmax-3:jmax-2,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank+1, 100, &
+                              uold(imin:imax, jmax-1:jmax,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank+1, 200, &
+                              MPI_COMM_WORLD, MPI_STATUS_IGNORE, exitcode)
+        !end if
     end if
 
     do ivar=1,nvar
@@ -125,14 +125,14 @@ subroutine make_boundary(idim)
         boundary_up = 1           ! The highest rank processor has to set reflective boundary conditions at its lower boundary
     else
         boundary_up = 2           ! If the processor has not highest rank, its lower boundary condition is outflowing
-        if (rank /= nb_procs-1)then
+        !if (rank /= nb_procs-1)then
             comm_size = 2*nx*nvar
 
             ! send the first two rows of domain and receive ghost cells 
-            call MPI_SENDRECV(uold(imin:imax, jmin+2:jmin+3,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank+1, 100, &
-                              uold(imin:imax, jmin:jmin+1,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank+1, 200, &
+            call MPI_SENDRECV(uold(imin:imax, jmin+2:jmin+3,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank-1, 100, &
+                              uold(imin:imax, jmin:jmin+1,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank-1, 200, &
                               MPI_COMM_WORLD, MPI_STATUS_IGNORE, exitcode)   
-        end if
+        !end if
     end if
 
     do ivar=1,nvar

@@ -60,8 +60,8 @@ subroutine output
 
   nout=nstep/noutput
   call title(nout,char)
-  call title(rank,charpe)
-  filename='hydro_output/output_'//TRIM(charpe)//'.'//TRIM(char)
+  call title(rank+1,charpe)
+  filename='hydro_output/output_'//TRIM(char)//'.'//TRIM(charpe)
   open(10,file=filename,form='unformatted')
   rewind(10)
   !print*,'Outputting array of size=',nx,ny,nvar
