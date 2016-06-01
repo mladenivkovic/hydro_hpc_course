@@ -74,8 +74,6 @@ subroutine make_boundary(idim)
   else
 
     ! Lower boundary
-    call MPI_COMM_RANK(MPI_COMM_WORLD, rank, exitcode)
-
     if (rank == nb_procs-1)then
         boundary_down = 1           ! The highest rank processor has to set reflective boundary conditions at its lower boundary
     else
@@ -84,8 +82,8 @@ subroutine make_boundary(idim)
         comm_size = 2*nx*nvar
         
         ! send the last two rows of domain and receive ghost cells 
-        call MPI_SENDRECV(uold(imin:imax, jmax-3:jmax-2,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank+1, 100, &
-                          uold(imin:imax, jmax-1:jmax,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank+1, 200, &
+        call MPI_SENDRECV(uold(imin:imax, jmax-3:jmax-2,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank-1, 100, &
+                          uold(imin:imax, jmax-1:jmax,1:nvar), comm_size, MPI_DOUBLE_PRECISION, rank-1, 200, &
                           MPI_COMM_WORLD, MPI_STATUS_IGNORE, exitcode)
         end if
     end if
@@ -122,9 +120,7 @@ subroutine make_boundary(idim)
 !!$           end do
 !!$        end do
 
-     ! Upper boundary
-    call MPI_COMM_RANK(MPI_COMM_WORLD, rank, exitcode)
-
+    ! Upper boundary
     if (rank == 0)then
         boundary_up = 1           ! The highest rank processor has to set reflective boundary conditions at its lower boundary
     else
