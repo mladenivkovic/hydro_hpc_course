@@ -15,7 +15,7 @@ fi
 
 # create png out of fortran output
 for i in output_*; do
-    hydropic_movie $i
+    hydropic_movie_serial $i
 done
 
 #create movie out of png

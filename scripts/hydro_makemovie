@@ -4,7 +4,7 @@
 #    Usage: hydro_makemovie [options]
 #    Options:
 #    -h  display help
-#    -limits <low> <high> create movie for parallel execution 
+#    -l <low> <high> create movie for parallel execution 
 #    output with same colorbars, where <low> is the lower limit for 
 #    the colorbar and <high> is the upper limit.
 #    -p  create movie for parallel execution output
