@@ -8,7 +8,7 @@ program hydro_main
   use hydro_IO
   use hydro_principal
 
-  use mpi
+  !use mpi
 
   implicit none
 
@@ -16,9 +16,9 @@ program hydro_main
   integer(kind=prec_int) :: nbp_init, nbp_final, nbp_max, freq_p,i,j, nb_procs, rank, exitcode
 
   ! * MISCHA * Initialize MPI Environment
-  call MPI_INIT(exitcode)
-  call MPI_COMM_SIZE(MPI_COMM_WORLD, nb_procs, exitcode)
-  call MPI_COMM_RANK(MPI_COMM_WORLD, rank, code)
+  !call MPI_INIT(exitcode)
+  !call MPI_COMM_SIZE(MPI_COMM_WORLD, nb_procs, exitcode)
+  !call MPI_COMM_RANK(MPI_COMM_WORLD, rank, code)
 
 
   ! Initialize clock counter
@@ -83,6 +83,6 @@ program hydro_main
   print *
 
   ! * MISCHA * Finalize MPI Environment
-  call MPI_FINALIZE(exitcode)
+  !call MPI_FINALIZE(exitcode)
 
 end program hydro_main
