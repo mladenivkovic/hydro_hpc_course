@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-for i in 1 2 4 8 16 32 64 128 256; do
+for i in 1 2 4 8 16 32 36 49; do
     mkdir $i
     cd "$i"/
     rm *.log

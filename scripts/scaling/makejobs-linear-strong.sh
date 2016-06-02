@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-for i in 1 2 4 8 16 32 64 128 256 ; do
+for i in 1 2 4 8 16 32 36 49; do
     mkdir $i
     cd "$i"/
 #    rm *.log
@@ -14,7 +14,7 @@ for i in 1 2 4 8 16 32 64 128 256 ; do
     
     cp ../../hydro_mpi .
 
-    nx=$(( 1000*$i ))
+    nx=`echo "1000*""$i" | bc`
 
     echo "&RUN" >mladen_IO.nml
     echo "nstepmax=10" >>mladen_IO.nml
