@@ -3,7 +3,7 @@
 wd=$PWD
 printf "%s\t%s\t%s\n" "#ncpu" "cpu-time" "     real-time" > $wd/times.dat
 
-for i in 1 2 4 8 16 32 128 256; do
+for i in 1 4 9 16 25 36 49 64 81 100 121 144 169 196 225 256 ; do
 
     cd $i
     if [ -f run*.log ]; then
