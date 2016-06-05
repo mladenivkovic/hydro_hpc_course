@@ -1,4 +1,4 @@
-\documentclass[9pt]{beamer}
+\documentclass[8pt]{beamer}
 
 
 
@@ -228,13 +228,13 @@
 	\titlepage
 \end{frame}
 
-
+\section{The Hydro Code}
 \begin{frame}
 	\frametitle{The Hydro Code}
 	
-	The hydro code solves the Euler equations $\displaystyle \frac{\partial \vec{U}}{\partial t} + \vec{\nabla} \vec{F} = 0 $ , where $\vec{U} = (...) $ is the vector containing the conserved quantities ... and $\vec{F} = (...)$  blablabla for a two dimensional hydrodynamic simulation.
+	The hydro code solves the Euler equations $\displaystyle \frac{\partial \vec{U}}{\partial t} + \vec{\nabla} \vec{F} = 0 $ , where $\vec{U} = (...) $ is the vector containing the conserved quantities ... and $\vec{F} = (...)$  blablabla for a two dimensional hydrodynamic simulation. \\~\\
 	
-	The simulation domain is rectangular, divided in square cells.
+	The simulation domain is rectangular, divided in square cells. The boundary conditions for the outermost cells are set to simulate a wall by mirroring the last two rows of cells before the wall. \\~\\
 	
 	It uses a Godunov's scheme with an exact Riemann solver, which yields the following numerical equation to be solved for each cell of the domain and for both dimensions separately:
 	
@@ -245,102 +245,57 @@
 
 
 
-
-
-
-
-\section{Section 1}
+\section{Parallelisation Strategy}
 \begin{frame}
-	\frametitle{Test Frametitle}
-	\framesubtitle{Test yo}
-
-    \begin{itemize}
-	\item Test
-	\item Test 2
-	\item Test 3
-    \end{itemize}
-    \begin{description}
-      \item[${G_3}'$:] Die Menge R ist ausdrückbar.
-      \item WTF
-      \item [Das hier:] Description: Aufzählung ohne Punkte
-    \end{description}
+	\frametitle{Parallelisation Strategy}
+	
+	The strategy used for the parallelisation of the code was to split the simulation domain between the processors, so each processor would only work on its own part of the domain, without having knowledge of what is happening in the domains of other processors. Before each step, the borders in the direction that is being calculated are communicated to neighbouring processors, creating a connection between the split domain parts.\\~\\
+	
+	In the initialisation phase of the code, first the best processor distribution for a given total number of processors and simulation domain size is calculated by choosing a combination of processors in $x$ and $y$ direction which minimises the communication time, considering the lattency and the message sizes.
+	
+	Then, the domain is split amongst those processors as evenly as possible. If the grid size in $x$ (resp. $y$) direction is not a multiple of the number of processors assigned to the $x$ (resp. $y$) direction, the remaining amount of cells of this integer division is distributed one per processor, starting with the last in $x$ (resp. $y$) direction, so that the processor ranked $0$ would have less work, since it's the one responsible for runtime output.
+	
+	After this step, every processor is "taught" who its neighbours are, or whether there is a wall next to it.\\~\\
+	
+	The advantage of this parallelisation is that any domain size can be calculated for any numbers of processors and the most expensive part of the work is done in parallel, but the processor distribution along a direction is not freely choosable, even though it may be enforced by setting the simulation domain sizes appropriately.
 \end{frame}
 
 
 
-\section{Section 2}
-\subsection{Subsection name}
+
+
+
+
+
+
+\section{Bottlenecks}
 \begin{frame}
-    \begin{figure}[!htb]
-      \centering
-        \minipage{0.4\textwidth}
-          \fbox{\includegraphics[height=3cm, keepaspectratio]{Bilder/test.jpg}}%
-          \caption{RS-Flipflop}%
-          \label{fig:rsflipflop}
-        \endminipage\hspace{1cm}   
-      %
-        \minipage{0.4\textwidth}
-          \fbox{\includegraphics[height=3cm, keepaspectratio]{Bilder/test.jpg}}%
-          \caption{\smash{getaktetes RS-Flipflop}}%
-          \label{fig:rsflipfloptakt}
-        \endminipage
-    \end{figure}
+	\frametitle{Bottlenecks}
+	We identified the bottlenecks of the code to be in the communication between the processors.\\~\\
+	
+	On one hand, on each calculation step, the maximal allowed time step, which ensures conservation of the conservative variables, must be recalculated by each processor. Then the minimal value of this maximal timestep must be communicated to all processors for the simulation to evolve at the same pace for each part of the domain. For this communication, we used the MPI$\_$ALLREDUCE routine. This is a blocking call and might waste processing time if processors have to wait for eachother often. To minimise waiting time, we tried to distribute the work as evenly as possible amongst the processors.
+	
+	On the other hand, before each calculation step, the borders of the domain have to be communicated by each processor to each of its neighbours. For this, we used a MPI$\_$SENDRECV routine, which is a blocking call as well. Since we're sending a part of an array for every communication, the MPI routine will create an array temporary for each communication. This bottleneck might be optimised by using nonblocking calls and defining a new MPI structure type, but we couldn't realise those ideas due to time limitations.
 \end{frame}
 
-\section{blocktest}
-\begin{frame}
-	\frametitle{Blöcke}
 
-    \begin{block}{Einfacher Blocktitel}
-        Einfacher Blocktext
-    \end{block}
-    
-    \begin{exampleblock}{Beispielblocktitel}
-         Beispielblocktext
-    \end{exampleblock}
-   
-    \begin{alertblock}{Warnungsblocktitel}
-         Warnungsblocktext
-    \end{alertblock}
-    
-\end{frame}
 
-\section{Beweise, Definitionen, Lemmata, Bemerkung}
-\begin{frame}[fragile]
-	\frametitle{Beweise etc}
 
-    \begin{proof}
-        Beweis
-    \end{proof}
-    
-    \begin{lemma}[XY -- Ein Dual zu YX]
-        Lemma
-    \end{lemma}
-    
-    \begin{theorem}[T -- Nach Tarski]
-        Theorem
-    \end{theorem}
-    
-     \begin{bem}
-	Bemerkung: zuerst 
-	  \begin{verbatim}
-	    \newtheorem*{bem}{Bemerkung}
-	  \end{verbatim}
-	  in Präambel setzen! 
-     \end{bem}
-%     Auch muss \begin{frame}[fragile]{Frametitle}             
-\end{frame}
+\section{Performance and Scaling: Weak Scaling}
 
 \begin{frame}
-	\frametitle{Overlays}
-   \begin{itemize}
-        \item Einleitung
-        \item<2-> daher
-        \item<alert@3> aber Achtung!
-        \item<3-> also so und so
-        \item<4-> Schlussfolgerung
-   \end{itemize}
+	\frametitle{Performance and Scaling: Weak Scaling} 
 \end{frame}
+
+
+\section{Performance and Scaling: Strong Scaling}
+
+\begin{frame}
+	\frametitle{Performance and Scaling: Strong Scaling} 
+\end{frame}
+
+
+
 
 
 \section{Zweispaltig}
