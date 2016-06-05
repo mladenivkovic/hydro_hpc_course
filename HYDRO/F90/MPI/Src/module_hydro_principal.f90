@@ -30,13 +30,13 @@ subroutine init_hydro
   call create_procmap()
 
   !do i = 1, nproc
-  !  if (myid==i) then
-  !  write(*, *) "Myid", myid
-  !  write(*, *) "leftofme", leftofme, "rightofme", rightofme
-  !  write(*, *) "above me", aboveme, "below me", belowme
-  !  write(*, *)
-  !  end if
-  !  call MPI_BARRIER(MPI_COMM_WORLD, exitcode)
+    !if (myid==i) then
+    !write(*, *) "Myid", myid
+    !write(*, *) "leftofme", leftofme, "rightofme", rightofme
+    !write(*, *) "above me", aboveme, "below me", belowme
+    !write(*, *)
+    !end if
+    !call MPI_BARRIER(MPI_COMM_WORLD, exitcode)
   !end do
 
   allocate(imin_global(1:nproc_x), imax_global(1:nproc_x), jmin_global(1:nproc_y), jmax_global(1:nproc_y))
@@ -45,7 +45,7 @@ subroutine init_hydro
   ! Assigning indices imin, imax, jmin, jmax to all processors.
   ! First get "mean domain width" by division, then fill up
   ! unassigned cells to processors starting with the last one.
-  !domainwidth_x = nx/nproc_x
+  domainwidth_x = nx/nproc_x
   domainwidth_y = ny/nproc_y
 
   do i=1, nproc_x
