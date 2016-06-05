@@ -1,4 +1,4 @@
-\documentclass[11pt]{beamer}
+\documentclass[9pt]{beamer}
 
 
 
@@ -86,12 +86,12 @@
 %---------------------
 %--Metainformationen--
 %---------------------
-\title{Probing magnetic fields in solids using muon spin rotation}
+\title{High Performance Computing 1b: Hydro Code}
 
-\author[M. Ivkovic]{
-	Mladen Ivkovic
+\author{
+	Mladen Ivkovic, Mischa Knabenhans, Rafael Souzalima
 }
-\date[16.11.15]{16. November 2015}
+\date{June 2016}
 
 
 % \title[Kurzform]{Vortrag zur Berechenbarkeit}
@@ -228,8 +228,19 @@
 	\titlepage
 \end{frame}
 
-\begin{frame}{Outline}\label{tableofcontents}
-   \tableofcontents
+
+\begin{frame}
+	\frametitle{The Hydro Code}
+	
+	The hydro code solves the Euler equations $\displaystyle \frac{\partial \vec{U}}{\partial t} + \vec{\nabla} \vec{F} = 0 $ , where $\vec{U} = (...) $ is the vector containing the conserved quantities ... and $\vec{F} = (...)$  blablabla for a two dimensional hydrodynamic simulation.
+	
+	The simulation domain is rectangular, divided in square cells.
+	
+	It uses a Godunov's scheme with an exact Riemann solver, which yields the following numerical equation to be solved for each cell of the domain and for both dimensions separately:
+	
+	\begin{align*}
+		U^{n+1}_{i,j} = U^n_{i,j} + \frac{\Delta t}{\Delta x} \left( F^{n + \frac{1}{2}}_{x, i + \frac{1}{2}} -  F^{n + \frac{1}{2}}_{x, i - \frac{1}{2}}\right)
+	\end{align*}
 \end{frame}
 
 
