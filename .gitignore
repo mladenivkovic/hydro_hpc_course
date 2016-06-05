@@ -11,3 +11,6 @@ hydro_mpi
 run*.log
 slurm*.out
 HYDRO/F90/MonoRef/Src/hydro_mono/*
+*.slm
+*.pdf
+*.nml
