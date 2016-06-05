@@ -29,7 +29,7 @@ for i in 1 2 4 9 16 18 24 36 72 108 144 180 216 252 288 324 360; do
     echo "&MESH" >>mladen_IO.nml
     echo "nx=""$nx" >>mladen_IO.nml
     echo "ny=200" >>mladen_IO.nml
-    echo "dx=0.00001" >>mladen_IO.nml
+    echo "dx=0.001" >>mladen_IO.nml
     echo "boundary_left=1" >>mladen_IO.nml
     echo "boundary_right=1" >>mladen_IO.nml
     echo "boundary_down=1" >>mladen_IO.nml
