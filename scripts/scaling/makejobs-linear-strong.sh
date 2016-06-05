@@ -1,31 +1,32 @@
 #!/bin/bash
 
 
-for i in 1 2 4 8 16 32 36 49; do
+for i in 1 18 36 72 108 144 180 216 252 288 324 360; do
     mkdir $i
     cd "$i"/
-#    rm *.log
-#    rm *.out
+    rm *.log
+    rm -r hydro_output
+    rm *.out
     echo "#!/bin/bash" > job-hydro.slm
-    echo '#SBATCH -n '"$i"' -t 00:10:00' >> job-hydro.slm
-    echo "#SBATCH --job-name='hydro""$i""'" >> job-hydro.slm
+    echo '#SBATCH -n '"$i"' -t 00:15:00' >> job-hydro.slm
+    echo "#SBATCH --job-name='hydro_ls""$i""'" >> job-hydro.slm
+    echo "#SBATCH --ntasks-per-core=1" >> job-hydro.slm
     echo 'export DATE=`date +%F_%Hh%M`' >> job-hydro.slm
     echo "srun -n ""$i"' ./hydro_mpi mladen_IO.nml > run$DATE.log' >> job-hydro.slm
     
     cp ../../hydro_mpi .
 
-    nx=`echo "1000*""$i" | bc`
 
     echo "&RUN" >mladen_IO.nml
-    echo "nstepmax=10" >>mladen_IO.nml
+    echo "nstepmax=100" >>mladen_IO.nml
     echo "tend=200.0" >>mladen_IO.nml
-    echo "noutput=100" >>mladen_IO.nml
+    echo "noutput=1000" >>mladen_IO.nml
     echo "on_output=.false." >>mladen_IO.nml
     echo "/" >>mladen_IO.nml
     echo "" >>mladen_IO.nml
     echo "&MESH" >>mladen_IO.nml
-    echo "nx=""$nx" >>mladen_IO.nml
-    echo "ny=500" >>mladen_IO.nml
+    echo "nx=36000" >>mladen_IO.nml
+    echo "ny=100" >>mladen_IO.nml
     echo "dx=0.01" >>mladen_IO.nml
     echo "boundary_left=1" >>mladen_IO.nml
     echo "boundary_right=1" >>mladen_IO.nml
