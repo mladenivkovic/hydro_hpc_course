@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-for i in 1 18 36 72 108 144 180 216 252 288 324 360; do
+for i in 1 2 4 9 16 18 24 36 72 108 144 180 216 252 288 324 360; do
     mkdir $i
     cd "$i"/
     rm *.log
@@ -14,20 +14,20 @@ for i in 1 18 36 72 108 144 180 216 252 288 324 360; do
     echo 'export DATE=`date +%F_%Hh%M`' >> job-hydro.slm
     echo "srun -n ""$i"' ./hydro_mpi mladen_IO.nml > run$DATE.log' >> job-hydro.slm
     
-    cp ../../hydro_mpi .
+    cp ~/hydro/HYDRO/F90/MPI/Src/hydro_mpi .
 
 
     echo "&RUN" >mladen_IO.nml
     echo "nstepmax=100" >>mladen_IO.nml
-    echo "tend=200.0" >>mladen_IO.nml
+    echo "tend=99999999.0" >>mladen_IO.nml
     echo "noutput=1000" >>mladen_IO.nml
     echo "on_output=.false." >>mladen_IO.nml
     echo "/" >>mladen_IO.nml
     echo "" >>mladen_IO.nml
     echo "&MESH" >>mladen_IO.nml
-    echo "nx=36000" >>mladen_IO.nml
-    echo "ny=100" >>mladen_IO.nml
-    echo "dx=0.01" >>mladen_IO.nml
+    echo "nx=48000" >>mladen_IO.nml
+    echo "ny=200" >>mladen_IO.nml
+    echo "dx=0.00001" >>mladen_IO.nml
     echo "boundary_left=1" >>mladen_IO.nml
     echo "boundary_right=1" >>mladen_IO.nml
     echo "boundary_down=1" >>mladen_IO.nml
