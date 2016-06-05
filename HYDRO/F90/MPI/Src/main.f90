@@ -78,8 +78,8 @@ program hydro_main
   endif  
   
   if (myid==1) then
-    write(*, '(A,F18.14)') 'CPU time (s.)     : ',tps_cpu 
-    write(*, '(A,F18.14)') 'Time elapsed (s.) : ',tps_elapsed
+    write(*, '(A,F25.15)') 'CPU time (s.)     : ',tps_cpu 
+    write(*, '(A,F25.15)') 'Time elapsed (s.) : ',tps_elapsed
   end if
   call MPI_FINALIZE(exitcode)
 end program hydro_main
