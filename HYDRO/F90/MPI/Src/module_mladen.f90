@@ -342,21 +342,17 @@ subroutine create_procmap()
 
 
     do i=1, nproc_x
-        if (myid==i) belowme=wall ! create upper wall
-        if (myid==nproc-i+1) aboveme=wall !create lower wall
         do j=1, nproc_y
 
             if (myid==1+(j-1)*nproc_x) leftofme=wall !create left wall
             if (myid==nproc_x+(j-1)*nproc_x) rightofme=wall !create right wall
 
             !get neighbours below
-            if (j/=1) then
-                if (myid==i+(j-1)*nproc_x) belowme=i+(j-2)*nproc_x
-            end if
+            if (myid==i+j*nproc_x) belowme=myid-nproc_x
 
             !get neighbours above
-            if (j/=nproc_y) then 
-                if (myid==i+(j-1)*nproc_x) aboveme=i+j*nproc_x 
+            if (j/=nproc_y) then
+                if (myid==((j-1)*nproc_x)+i) aboveme=myid+nproc_x 
             end if
 
             !get neighbours to the right 
@@ -369,6 +365,8 @@ subroutine create_procmap()
                 if (myid==i+(j-1)*nproc_x) leftofme=i-1+(j-1)*nproc_x
             end if
         end do
+        if (myid==i) belowme=wall ! create upper wall
+        if (myid==nproc-i+1) aboveme=wall !create lower wall
     end do
 
 
