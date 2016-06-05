@@ -32,9 +32,7 @@ program hydro_main
 
 
   call writetoscreen(' ')
-  write(message, *) 'Starting time integration, nx = ',nx,' ny = ',ny  
-  call writetoscreen(TRIM(message))
-  call writetoscreen(' ')
+  if (myid==1) write(*, *) 'Starting time integration, nx = ',nx,' ny = ',ny  
   ! Main time loop
   do while (t < tend .and. nstep < nstepmax)
 
@@ -59,11 +57,9 @@ program hydro_main
         call godunov(1,dt_sync)
      end if
 
-
      nstep=nstep+1
      t=t+dt_sync
-     write(message, '(" step= ",I6,"   t= ",1pe10.3,"   dt=",1pe10.3)') nstep,t,dt_sync
-     call writetoscreen(message)
+     if (myid==1) write(*, '(" step= ",I6,"   t= ",1pe10.3,"   dt=",1pe10.3)') nstep,t,dt_sync
 
   end do
 
@@ -81,8 +77,9 @@ program hydro_main
      tps_elapsed=real(nbp_final-nbp_init+nbp_max)/real(freq_p) 
   endif  
   
-  call writetoscreen(' ')
-  write(message, *) 'CPU time (s.)     : ',tps_cpu, NEW_LINE(C), ' Time elapsed (s.) : ',tps_elapsed
-  call writetoscreen(TRIM(message))
+  if (myid==1) then
+    write(*, '(A,F18.14)') 'CPU time (s.)     : ',tps_cpu 
+    write(*, '(A,F18.14)') 'Time elapsed (s.) : ',tps_elapsed
+  end if
   call MPI_FINALIZE(exitcode)
 end program hydro_main

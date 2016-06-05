@@ -48,13 +48,13 @@ subroutine read_params
   myid = myid+1
 
 
-  call writetoscreen('#################################')
-  call writetoscreen('######      HYDRO CODE     ######')
-  call writetoscreen('#################################')
+  !call writetoscreen('#################################')
+  !call writetoscreen('######      HYDRO CODE     ######')
+  !call writetoscreen('#################################')
 
   !other init stuff
-  call makedir('hydro_output')
-  call MPI_BARRIER(MPI_COMM_WORLD, exitcode)
+  !call makedir('hydro_output')
+  !call MPI_BARRIER(MPI_COMM_WORLD, exitcode)
   ! so that no file will start writing into a directory that doesn't exist yet
 
 
