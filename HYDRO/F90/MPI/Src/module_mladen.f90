@@ -70,11 +70,11 @@ subroutine writeruninfo()
     implicit none
     
     if (myid==1) then
-        open(10, file='hydro_output/hydro_runinfo.txt', form='formatted')
-        write(10, '(A1, 5A8)') "#", "nx", "ny", "nproc", "nproc_x", "nproc_y"
-        write(10, '(x, 5I8)') nx, ny, nproc, nproc_x, nproc_y
-        close(10)
-
+        !open(10, file='hydro_output/hydro_runinfo.txt', form='formatted')
+        !write(10, '(A1, 5A8)') "#", "nx", "ny", "nproc", "nproc_x", "nproc_y"
+        !write(10, '(x, 5I8)') nx, ny, nproc, nproc_x, nproc_y
+        !close(10)
+!
         write(*,*)
         write(*, *) "Runinfo:"
         write(*, '(5A8)') "nx", "ny", "nproc", "nproc_x", "nproc_y"
@@ -106,7 +106,6 @@ subroutine communicate_boundaries(idim)
     implicit none
     integer, intent(in) :: idim
     integer, dimension(MPI_STATUS_SIZE) :: status
-
 if(idim==1) then !communicate boundaries in x direction
 
     ! WARNING! MYID = RANK + 1 !!!!!
@@ -351,13 +350,13 @@ subroutine create_procmap()
             if (myid==nproc_x+(j-1)*nproc_x) rightofme=wall !create right wall
 
             !get neighbours below
-            !if (j /= nproc_y) then
-                if (myid==i+j*nproc_x) belowme=i+(j-1)*nproc_x
-            !end if
+            if (j/=1) then
+                if (myid==i+(j-1)*nproc_x) belowme=i+(j-2)*nproc_x
+            end if
 
             !get neighbours above
             if (j/=nproc_y) then 
-                if (myid==i+(j-1)*nproc_x)  aboveme=i+j*nproc_x 
+                if (myid==i+(j-1)*nproc_x) aboveme=i+j*nproc_x 
             end if
 
             !get neighbours to the right 

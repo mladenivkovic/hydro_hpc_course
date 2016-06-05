@@ -45,7 +45,7 @@ subroutine init_hydro
   ! Assigning indices imin, imax, jmin, jmax to all processors.
   ! First get "mean domain width" by division, then fill up
   ! unassigned cells to processors starting with the last one.
-  domainwidth_x = nx/nproc_x
+  !domainwidth_x = nx/nproc_x
   domainwidth_y = ny/nproc_y
 
   do i=1, nproc_x
@@ -203,7 +203,6 @@ subroutine godunov(idim,dt)
   ! Local variables
   integer(kind=prec_int) :: i,j,in
   real(kind=prec_real)   :: dtdx
-
   ! constant
   dtdx=dt/dx
 
@@ -229,9 +228,11 @@ subroutine godunov(idim,dt)
               end do
            end do
         end if
+
  
         ! Convert to primitive variables
         call constoprim(u,q,c)
+
 
         ! Characteristic tracing
         call trace(q,dq,c,qxm,qxp,dtdx)
@@ -242,6 +243,7 @@ subroutine godunov(idim,dt)
               qright(i,in)=qxp(i+2,in)
            end do
         end do
+
 
         ! Solve Riemann problem at interfaces
         call riemann(qleft,qright,qgdnv, &
