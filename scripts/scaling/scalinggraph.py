@@ -5,19 +5,12 @@
 
 
 from os import getcwd
-from sys import argv #command line arguments
 import matplotlib 
 matplotlib.use('Agg') #don't show anything unless I ask you to. So no need to get graphical all over ssh.
-import subprocess
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-
-
 workdir= str(getcwd())
-
-
 
 def get_times(filename):
 
@@ -105,7 +98,7 @@ if __name__ == "__main__":
 
     fig_path = workdir+'/'+'weak_scaling'+'.pdf'
     print "saving figure as"+fig_path
-    plt.savefig(fig_path, format='pdf', facecolor=fig2.get_facecolor(), transparent=False, dpi=150)
+    plt.savefig(fig_path, format='pdf', facecolor=fig1.get_facecolor(), transparent=False, dpi=150)
     plt.close()
 
 
