@@ -70,10 +70,12 @@ subroutine writeruninfo()
     implicit none
     
     if (myid==1) then
-        !open(10, file='hydro_output/hydro_runinfo.txt', form='formatted')
-        !write(10, '(A1, 5A8)') "#", "nx", "ny", "nproc", "nproc_x", "nproc_y"
-        !write(10, '(x, 5I8)') nx, ny, nproc, nproc_x, nproc_y
-        !close(10)
+        if (on_output) then
+            open(10, file='hydro_output/hydro_runinfo.txt', form='formatted')
+            write(10, '(A1, 5A8)') "#", "nx", "ny", "nproc", "nproc_x", "nproc_y"
+            write(10, '(x, 5I8)') nx, ny, nproc, nproc_x, nproc_y
+            close(10)
+        end if
 !
         write(*,*)
         write(*, *) "Runinfo:"

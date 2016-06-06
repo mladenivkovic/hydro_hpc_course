@@ -48,6 +48,8 @@ module hydro_parameters
   integer(kind=prec_int) :: nstepmax=1000000
   logical                :: on_output=.true.
 
+
+  !!!
   !!!
   !!! MPI - stuff
   integer :: exitcode

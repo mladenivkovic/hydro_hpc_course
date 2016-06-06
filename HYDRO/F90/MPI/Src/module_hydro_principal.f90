@@ -84,8 +84,11 @@ subroutine init_hydro
     end do
   end do
 
- 
-  allocate(uold(1:nx+4, 1:ny+4, 1:nvar))
+
+  !write(*, *) "id", myid, "w", width, totalwidth, "h", height, totalheight
+  !allocate(uold(1:nx+4, 1:ny+4, 1:nvar))
+
+  allocate(uold(imin:imax, jmin:jmax, 1:nvar))
 
   ! Initial conditions in grid interior
   ! Warning: conservative variables U = (rho, rhou, rhov, E)
@@ -164,7 +167,7 @@ subroutine cmpdt(dt)
   allocate(q(1:nx,1:IP),e(1:nx),c(1:nx))
   !allocate( q(imin:imax, 1:IP), e(imin:imax), c(imin:imax))
   do j=jmin+2,jmax-2
-     do i=1, nx
+     do i=imin, imax-4
         q(i,ID) = max(uold(i+2,j,ID),smallr) ! take the bigger of the two -> so that the density doesn't surpass a minimal value "smallr"
         q(i,IU) = uold(i+2,j,IU)/q(i,ID) !calculate velocities: rho*v/rho
         q(i,IV) = uold(i+2,j,IV)/q(i,ID)

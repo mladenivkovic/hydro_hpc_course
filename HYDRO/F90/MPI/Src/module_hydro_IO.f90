@@ -47,16 +47,16 @@ subroutine read_params
   call MPI_COMM_RANK(MPI_COMM_WORLD, myid, exitcode)
   myid = myid+1
 
-
-  !call writetoscreen('#################################')
-  !call writetoscreen('######      HYDRO CODE     ######')
-  !call writetoscreen('#################################')
+if (on_output) then
+  call writetoscreen('#################################')
+  call writetoscreen('######      HYDRO CODE     ######')
+  call writetoscreen('#################################')
 
   !other init stuff
-  !call makedir('hydro_output')
-  !call MPI_BARRIER(MPI_COMM_WORLD, exitcode)
+  call makedir('hydro_output')
+  call MPI_BARRIER(MPI_COMM_WORLD, exitcode)
   ! so that no file will start writing into a directory that doesn't exist yet
-
+end if
 
 end subroutine read_params
 
