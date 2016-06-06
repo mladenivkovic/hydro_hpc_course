@@ -3,7 +3,7 @@
 wd=$PWD
 printf "%s\t%s\t%s\n" "#ncpu" "cpu-time" "     time" > $wd/times.dat
 
-for i in {1..360}; do
+for i in {1..361}; do
 
     if [ -d "$i" ] ; then
         cd $i
