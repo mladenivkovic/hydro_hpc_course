@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
 
 
-    plt.subplots_adjust(left=0.08, right=0.95, top=0.85, bottom=0.1,wspace=0.3)
+    plt.subplots_adjust(left=0.08, right=0.95, top=0.85, bottom=0.1,wspace=0.2)
 
     fig_path = workdir+'/'+'weak_scaling'+'.pdf'
     print "saving figure as"+fig_path
@@ -143,6 +143,7 @@ if __name__ == "__main__":
     ax2.plot(nls, mtls/tls, 'ro', markersize=2.5, markeredgecolor='r', zorder=5)
     ax2.plot(nss, mtss/tss, 'b-', linewidth=0.1, label='square domain', zorder=5)
     ax2.plot(nss, mtss/tss, 'bo', markersize=2.5, markeredgecolor='b', zorder=5)
+    ax2.plot([0,nss[-1]+1], [0, nss[-1]+1], 'k:', linewidth=0.1, label='ideal speedup', zorder=5)
     ax2.grid(color='lightgrey',linestyle='solid', linewidth=0.1 , zorder=1)
     ax2.legend(loc=0, prop={'size':9,'family':'serif'})
     ax2.set_title("Strong Scaling", size=13, family='serif')
@@ -150,7 +151,7 @@ if __name__ == "__main__":
     ax2.set_ylabel(r"$t_{mono}$/$t_{P}$", family='serif')
 
     
-    plt.subplots_adjust(left=0.08, right=0.95, top=0.85, bottom=0.1,wspace=0.3)
+    plt.subplots_adjust(left=0.08, right=0.95, top=0.85, bottom=0.1,wspace=0.2)
 
     # saving figures
     fig_path = workdir+'/'+'strong_scaling'+'.pdf'
