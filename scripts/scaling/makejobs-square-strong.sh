@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-#for i in 1 9 16 25 36 49 64 81 100 121 144 169 196 225 256 289 324; do
+#for i in 1 9 16 25 36 49 64 81 100 121 144 169 196 225 256 289 324 361; do
 for i in 361; do
     mkdir $i
     cd "$i"/
@@ -9,7 +9,7 @@ for i in 361; do
     rm -r hydro_output 2>/dev/null
     rm *.out 2>/dev/null
     echo "#!/bin/bash" > job-hydro.slm
-    echo '#SBATCH -n '"$i"' -t 00:45:00' >> job-hydro.slm
+    echo '#SBATCH -n '"$i"' -t 00:25:00' >> job-hydro.slm
     echo "#SBATCH --job-name='hydro_ss""$i""'" >> job-hydro.slm
     echo "#SBATCH --ntasks-per-core=1" >> job-hydro.slm
     echo 'export DATE=`date +%F_%Hh%M`' >> job-hydro.slm

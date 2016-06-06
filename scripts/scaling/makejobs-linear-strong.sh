@@ -8,7 +8,7 @@ for i in 1 2 4 9 16 18 24 36 72 108 144 180 216 252 288 324 360; do
     rm -r hydro_output
     rm *.out
     echo "#!/bin/bash" > job-hydro.slm
-    echo '#SBATCH -n '"$i"' -t 00:15:00' >> job-hydro.slm
+    echo '#SBATCH -n '"$i"' -t 00:20:00' >> job-hydro.slm
     echo "#SBATCH --job-name='hydro_ls""$i""'" >> job-hydro.slm
     echo "#SBATCH --ntasks-per-core=1" >> job-hydro.slm
     echo 'export DATE=`date +%F_%Hh%M`' >> job-hydro.slm
@@ -25,7 +25,7 @@ for i in 1 2 4 9 16 18 24 36 72 108 144 180 216 252 288 324 360; do
     echo "/" >>mladen_IO.nml
     echo "" >>mladen_IO.nml
     echo "&MESH" >>mladen_IO.nml
-    echo "nx=48000" >>mladen_IO.nml
+    echo "nx=45360" >>mladen_IO.nml
     echo "ny=200" >>mladen_IO.nml
     echo "dx=0.001" >>mladen_IO.nml
     echo "boundary_left=1" >>mladen_IO.nml
