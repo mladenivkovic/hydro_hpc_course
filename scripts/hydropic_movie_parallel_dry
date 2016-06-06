@@ -1,8 +1,9 @@
+#!/home/ics/volker/Anaconda/bin/python
+# ^ for python on zbox
+
 #!/users/biernack/Enthought/Canopy_64bit/User/bin/python 
 # ^ for python on dora/ela
 
-#!/home/ics/volker/Anaconda/bin/python
-# ^ for python on zbox
 
 
 #/usr/bin/python # use this as shebang if on local machine
@@ -78,7 +79,7 @@ figheight=float(ny_tot)/bigger*12.0
 #Plotting
 fig = pyplot.figure(facecolor='white', figsize=(figwidth+1, figheight+0.5), dpi=150) 
 ax = fig.add_subplot(1,1,1)
-pyplot.tight_layout() #nice layout
+#pyplot.tight_layout() #nice layout
 
 print "plotting"
 
