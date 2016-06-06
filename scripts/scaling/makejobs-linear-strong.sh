@@ -1,14 +1,14 @@
 #!/bin/bash
 
 
-for i in 1 2 4 9 16 18 24 36 72 108 144 180 216 252 288 324 360; do
+for i in 1 2 4 9 16 18 24 36 72 108 144 180 216 252 288 324 360 540 720 900; do
     mkdir $i
     cd "$i"/
     rm *.log
     rm -r hydro_output
     rm *.out
     echo "#!/bin/bash" > job-hydro.slm
-    echo '#SBATCH -n '"$i"' -t 00:20:00' >> job-hydro.slm
+    echo '#SBATCH -n '"$i"' -t 00:10:00' >> job-hydro.slm
     echo "#SBATCH --job-name='hydro_ls""$i""'" >> job-hydro.slm
     echo "#SBATCH --ntasks-per-core=1" >> job-hydro.slm
     echo 'export DATE=`date +%F_%Hh%M`' >> job-hydro.slm
