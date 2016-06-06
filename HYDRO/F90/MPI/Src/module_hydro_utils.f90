@@ -32,22 +32,14 @@ subroutine make_boundary(idim)
 !!$ integer(kind=prec_int) :: ijet
 !!$ real(kind=prec_real) :: djet,ujet,pjet
 
-
-
   if(idim==1)then
-
     call communicate_boundaries(idim)
     if(leftofme==wall) call makewall(1) !make left wall
     if (rightofme==wall) call makewall(2) !make right wall
-    
   else
-
     call communicate_boundaries(idim) 
     if (belowme==wall) call makewall(4) !make lower wall
     if (aboveme==wall) call makewall(3) !make upper wall
-
-    
-
 !!$        djet=1.0
 !!$        ujet=300.
 !!$        pjet=1.0
@@ -62,7 +54,6 @@ subroutine make_boundary(idim)
 !!$              end do
 !!$           end do
 !!$        end do
-
   end if
 end subroutine make_boundary
 

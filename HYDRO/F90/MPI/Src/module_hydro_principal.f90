@@ -45,6 +45,7 @@ subroutine init_hydro
   ! Assigning indices imin, imax, jmin, jmax to all processors.
   ! First get "mean domain width" by division, then fill up
   ! unassigned cells to processors starting with the last one.
+
   domainwidth_x = nx/nproc_x
   domainwidth_y = ny/nproc_y
 

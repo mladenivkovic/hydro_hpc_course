@@ -16,8 +16,6 @@ program hydro_main
   character(len=100) :: message, c
 
 
-
-
   ! Initialize clock counter
   ! system_clock and cpu_time are itrinistic fortran subroutines.
   call system_clock(count_rate=freq_p, count_max=nbp_max) 
