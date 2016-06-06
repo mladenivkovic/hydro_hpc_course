@@ -164,7 +164,7 @@ subroutine cmpdt(dt)
   cournox = zero
   cournoy = zero
 
-  allocate(q(1:nx,1:IP),e(1:nx),c(1:nx))
+  allocate(q(imin:imax,1:IP),e(imin:imax),c(imin:imax))
   !allocate( q(imin:imax, 1:IP), e(imin:imax), c(imin:imax))
   do j=jmin+2,jmax-2
      do i=imin, imax-4
@@ -176,13 +176,13 @@ subroutine cmpdt(dt)
         e(i)=q(i,IP)
      end do
 
-     call eos(q(1:nx,ID),e,q(1:nx,IP),c)
+     call eos(q(imin:imax,ID),e,q(imin:imax,IP),c)
      ! calculate pressure and speed of sound with equation of state.
      ! then calculate the time step according to the speed of sound
      ! so that the maximal movement is not larger than one cell.
 
-     cournox=max(cournox,maxval(c(1:nx)+abs(q(1:nx,IU))))
-     cournoy=max(cournoy,maxval(c(1:nx)+abs(q(1:nx,IV))))
+     cournox=max(cournox,maxval(c(imin:imax)+abs(q(imin:imax,IU))))
+     cournoy=max(cournoy,maxval(c(imin:imax)+abs(q(imin:imax,IV))))
   end do
 
   deallocate(q,e,c)
@@ -214,7 +214,7 @@ subroutine godunov(idim,dt)
 
   if (idim==1)then
      ! Allocate work space for 1D sweeps
-     call allocate_work_space(imin,imax,nx+1)
+     call allocate_work_space(imin,imax)
 
      do j=jmin+2,jmax-2
         ! Gather conservative variables
@@ -280,7 +280,7 @@ subroutine godunov(idim,dt)
   else
 
      ! Allocate work space for 1D sweeps
-     call allocate_work_space(jmin,jmax,ny+1)
+     call allocate_work_space(jmin,jmax)
 
      do i=imin+2,imax-2
         ! Gather conservative variables
@@ -343,11 +343,11 @@ subroutine godunov(idim,dt)
 
 contains
 
-  subroutine allocate_work_space(ii1,ii2,ngrid)
+  subroutine allocate_work_space(ii1,ii2)
     implicit none
 
     ! Dummy arguments
-    integer(kind=prec_int), intent(in) :: ii1,ii2,ngrid
+    integer(kind=prec_int), intent(in) :: ii1,ii2
 
     allocate(u  (ii1:ii2,1:nvar))
     allocate(q  (ii1:ii2,1:nvar))
@@ -355,18 +355,18 @@ contains
     allocate(qxm(ii1:ii2,1:nvar))
     allocate(qxp(ii1:ii2,1:nvar))
     allocate(c  (ii1:ii2))
-    allocate(qleft (1:ngrid,1:nvar))
-    allocate(qright(1:ngrid,1:nvar))
-    allocate(qgdnv (1:ngrid,1:nvar))
-    allocate(flux  (1:ngrid,1:nvar))
-    allocate(rl    (1:ngrid), ul   (1:ngrid), pl   (1:ngrid), cl    (1:ngrid))
-    allocate(rr    (1:ngrid), ur   (1:ngrid), pr   (1:ngrid), cr    (1:ngrid))
-    allocate(ro    (1:ngrid), uo   (1:ngrid), po   (1:ngrid), co    (1:ngrid))
-    allocate(rstar (1:ngrid), ustar(1:ngrid), pstar(1:ngrid), cstar (1:ngrid))
-    allocate(wl    (1:ngrid), wr   (1:ngrid), wo   (1:ngrid))
-    allocate(sgnm  (1:ngrid), spin (1:ngrid), spout(1:ngrid), ushock(1:ngrid))
-    allocate(frac  (1:ngrid), scr  (1:ngrid), delp (1:ngrid), pold  (1:ngrid))
-    allocate(ind   (1:ngrid), ind2 (1:ngrid))
+    allocate(qleft (ii1:ii2-3,1:nvar))
+    allocate(qright(ii1:ii2-3,1:nvar))
+    allocate(qgdnv (ii1:ii2-3,1:nvar))
+    allocate(flux  (ii1:ii2-3,1:nvar))
+    allocate(rl    (ii1:ii2-3), ul   (ii1:ii2-3), pl   (ii1:ii2-3), cl    (ii1:ii2-3))
+    allocate(rr    (ii1:ii2-3), ur   (ii1:ii2-3), pr   (ii1:ii2-3), cr    (ii1:ii2-3))
+    allocate(ro    (ii1:ii2-3), uo   (ii1:ii2-3), po   (ii1:ii2-3), co    (ii1:ii2-3))
+    allocate(rstar (ii1:ii2-3), ustar(ii1:ii2-3), pstar(ii1:ii2-3), cstar (ii1:ii2-3))
+    allocate(wl    (ii1:ii2-3), wr   (ii1:ii2-3), wo   (ii1:ii2-3))
+    allocate(sgnm  (ii1:ii2-3), spin (ii1:ii2-3), spout(ii1:ii2-3), ushock(ii1:ii2-3))
+    allocate(frac  (ii1:ii2-3), scr  (ii1:ii2-3), delp (ii1:ii2-3), pold  (ii1:ii2-3))
+    allocate(ind   (ii1:ii2-3), ind2 (ii1:ii2-3))
   end subroutine allocate_work_space
 
   subroutine deallocate_work_space
