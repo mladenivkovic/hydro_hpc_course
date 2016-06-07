@@ -91,7 +91,13 @@
 %\setbeamertemplate{footline}[frame]  % Seitenzahlen
     \setbeamertemplate{footline}{%
     	\raisebox{5pt}{\makebox[\paperwidth]{\hfill\makebox[10pt]{\hyperlink{tableofcontents}{\scriptsize\insertframenumber}}}}}
+%
+% Margins
+\setbeamersize{text margin left=8pt,text margin right=7pt} 
 
+%
+% Making titles smaller
+\setbeamerfont{frametitle}{size=\normalsize}
 
 
 %---------------------
@@ -244,15 +250,20 @@
 \begin{frame}
 	\frametitle{The Hydro Code}
 	
-	The hydro code solves the Euler equations $\displaystyle \frac{\partial \vec{U}}{\partial t} + \vec{\nabla} \vec{F} = 0 $ , where $\vec{U} = (...) $ is the vector containing the conserved quantities ... and $\vec{F} = (...)$  blablabla for a two dimensional hydrodynamic simulation. \\~\\
+	The hydro code is a hydrodynamical simulation which solves the conservative Euler equations
+	\begin{align*}
+		\frac{\partial \vec{U}}{\partial t} + \vec{\nabla} \vec{F} = 0
+	\end{align*}
+	for two dimensions, where $\vec{U} = (\rho, \rho u, \rho v, E) $ is the vector containing the conserved quantities density, momentum in $x$ and $y$ direction  ($u$ is the velocity in $x$ direction and $v$ the velocity in $y$ direction) and energy; and $\vec{F} = (\rho u, \rho u^2 + p, (E+p)u)$ resp. $\vec{F} = (\rho v, \rho v^2 + p, (E+p)v)$ the flux function, where $p$ is the pressure.\\~\\
 	
 	The simulation domain is rectangular, divided in square cells. The boundary conditions for the outermost cells are set to simulate a wall by mirroring the last two rows of cells before the wall. \\~\\
 	
 	It uses a Godunov's scheme with an exact Riemann solver, which yields the following numerical equation to be solved for each cell of the domain and for both dimensions separately:
-	
 	\begin{align*}
 		U^{n+1}_{i,j} = U^n_{i,j} + \frac{\Delta t}{\Delta x} \left( F^{n + \frac{1}{2}}_{x, i + \frac{1}{2}} -  F^{n + \frac{1}{2}}_{x, i - \frac{1}{2}}\right)
 	\end{align*}
+	
+	At each calculating step, the Godunov's scheme is solved first in one direction, then for the other. The direction in which will be calculated first switches every calculating step, leading to more precise results.
 \end{frame}
 
 
@@ -299,19 +310,19 @@
 	\frametitle{Performance and Scaling: Weak Scaling} 
 	
 \begin{columns}
-	\column{.5\textwidth}
+	\column{.6\textwidth}
 	
 	
 	Since our parallelisation allows domain splitting in both directions, we wanted to create a comparison between a strictly "linear execution", where the domain is split only in one direction, and a "square execution", where the number of processors assigned to each direction is equal. 
 	
 	
-	\column{.5\textwidth}
-	\begin{tikzpicture}[scale=0.5, transform shape]
+	\column{.35\textwidth}
+	\begin{tikzpicture}[scale=0.4, transform shape]
 	\draw[step=1cm,gray,very thin] (0, 0) grid (3, 3);
 	\draw[line width=1.3pt] (0,0) rectangle (3,3);
 	%
-	\draw[step=1cm,gray,very thin] (5, 1) grid (9, 2);
-	\draw[line width=1.3pt] (5,1) rectangle (9,2);
+	\draw[step=1cm,gray,very thin] (4, 1) grid (8, 2);
+	\draw[line width=1.3pt] (4,1) rectangle (8,2);
 	%
 	\node[scale=1.3] at (0.5, 0.5) {$P0$};
 	\node[scale=1.3] at (0.5, 1.5) {$P3$};
@@ -323,13 +334,13 @@
 	\node[scale=1.3] at (2.5, 1.5) {$P5$};
 	\node[scale=1.3] at (2.5, 2.5) {$P8$};
 	%
-	\node[scale=1.3] at (5.5, 1.5) {$P0$};
-	\node[scale=1.3] at (6.5, 1.5) {$P1$};
-	\node[scale=1.3] at (7.5, 1.5) {$P2$};
-	\node[scale=1.3] at (8.5, 1.5) {$P3$};
+	\node[scale=1.3] at (4.5, 1.5) {$P0$};
+	\node[scale=1.3] at (5.5, 1.5) {$P1$};
+	\node[scale=1.3] at (6.5, 1.5) {$P2$};
+	\node[scale=1.3] at (7.5, 1.5) {$P3$};
 	%
 	\node[text width = 4cm, align=center, scale=1.15] at (1.5, -0.6) {Processor distribution for a "square execution"};
-	\node[text width = 4cm, align=center, scale=1.15] at (7, -0.6) {Processor distribution for a "linear execution"};
+	\node[text width = 4cm, align=center, scale=1.15] at (6, -0.6) {Processor distribution for a "linear execution"};
 	\end{tikzpicture}
 
 \end{columns}
@@ -345,8 +356,12 @@
 %
 	
 	
-	For the weak scaling measurements, all processors were assigned the same workload of $200 \times 200$ cells for $100$ calculation steps, so the total number of cells increases with the number of processors.
-	Surprisingly the square execution requires less computation time, even though a square processor distribution requires more communications between processors.
+	For the weak scaling measurements, all processors were assigned the same workload of $200 \times 200$ cells for $100$ calculation steps, so the total number of cells increases with the number of processors $P$ ranging from $1$ to $900$.\\~\\
+	
+	
+	Surprisingly the square execution requires less computation time, even though a square processor distribution requires more communications between processors, while the amount of communicated data is constant.
+	
+	Since the number of cells per processor remain constant for all $P$, we may assume that the boundary communication time remains constant for all $P$ as well (at least for $P \geq 3$, when there is at least $1$ processor with the maximal amount of neighbours.) Therefore, with increasing $P$, the timestep communication (which uses the MPI$\_$ALLREDUCE routine) should dominate the efficiency loss.
 \end{frame}
 
 
@@ -360,12 +375,14 @@
 		\caption*{$P$: Number of processors used. $t_P$ : Measured execution time for $P$ processors.}	
 	\end{figure}
 	
-	For the strong scaling performance test, a fixed grid size was chosen and calculated for $100$ calculation steps and computed with a different amount of processors.
+	For the strong scaling performance test, a fixed grid size was chosen and calculated for $100$ calculation steps and computed with a different amount of processors $P$ ranging from $1$ to $900$.
 	
-	The grid size for the linear execution was $45360 \times 200$ and for the square execution it was $16200 \times 16200$. Please note that therefore the computation times in the plot above cannot be compared directly.
+	The grid size for the linear execution was $45360 \times 200$ and for the square execution it was $16200 \times 16200$. Please note that therefore the computation times in the plot above cannot be compared directly.\\~\\
 	
-	The square execution shows much better scaling than the linear execution. This can be explained by looking at how the communication time changes with the number of processors used: while we may assume the total lattency effects to be constant for all numbers of processors used, the transfer time ("talking time") reduces with the number of  
-	processors for a fixed total size grid because less and less cells need to be communicated between two processors. It can be shown (see appendix) that the rate of change of the communication time for a whole calculation step with changing processor number $\frac{dt_{c}}{dP}$ is $\propto -P^{-2}$ for the linear execution and $\propto -P^{-3/2}$ for the square execution. So the communication time for the square execution will decrease faster with increasing number of used processors, leading to the better scaling property for the square execution.
+	
+	
+	The square execution shows much better scaling than the linear execution. This can be explained by looking at how the boundary communication time changes with the number of processors used: while we may assume the total lattency effects to be constant for all numbers of processors used, the transfer time ("talking time") reduces with the number of  
+	processors for a fixed total size grid because less and less cells need to be communicated between two processors. It can be shown (see appendix) that the rate of change of the boundary communication time for a whole calculation step $t_c$ with respect to the number of processors used $P$ is $\frac{dt_{c, lin}}{dP} \propto -P^{-2}$ for the linear execution and $\frac{dt_{c, sq}}{dP} \propto -P^{-3/2}$ for the square execution. So the communication time for the square execution will decrease faster with increasing number of used processors, leading to the better scaling property for the square execution.
 
 \end{frame}
 
@@ -375,143 +392,81 @@
 	\frametitle{High Quality Output}
 	Below are three high quality outputs at calculation steps $X$, $Y$ and $Z$ for the gridsize $A \times B$, calculated on $n$ processors.
 	\begin{columns}
-		\column{.34\textwidth}
+		\column{.334\textwidth}
 		\begin{figure}
 			\begin{center}
-				\pgfimage[width=1.07\textwidth]{Bilder/test.jpg}
+				\pgfimage[width=1.0\textwidth]{Bilder/test.jpg}
 				\caption{Output $X$}
 			\end{center}
 		\end{figure}
-		\column{.34\textwidth}
+		\column{.334\textwidth}
 		\begin{figure}
 			\begin{center}
-				\pgfimage[width=1.07\textwidth]{Bilder/test.jpg}
+				\pgfimage[width=1.0\textwidth]{Bilder/test.jpg}
 				\caption{Output $X$}
 			\end{center}
 		\end{figure}
-		\column{.34\textwidth}
+		\column{.334\textwidth}
 		\begin{figure}
 			\begin{center}
-				\pgfimage[width=1.09\textwidth]{Bilder/test.jpg}
+				\pgfimage[width=1.0\textwidth]{Bilder/test.jpg}
 				\caption{Output $X$}
 			\end{center}
 		\end{figure}
 	\end{columns}
 \end{frame}
 
-
+\tiny
 \begin{frame}
-	\frametitle{Appendix}
-\end{frame}
-
-
-
-%########################################
-%########################################
-%########################################
-%########################################
-%########################################
-%########################################
-
-
-
-\section{Zweispaltig}
-\begin{frame}
-	\frametitle{Zweispaltige Sachen}
-    \begin{columns}
-         \column{.55\textwidth}
-                 \pgfimage[width=\textwidth]{Bilder/test.jpg}
-         \column{.45\textwidth}
-                 \begin{enumerate}
-                 \item Start
-                 \item Stopp
-                 \end{enumerate}
-    \end{columns}
-\end{frame}
-
-
-
-
-
-
-\section{Bilder und Quellen}
-\subsection{General principle of $\mathbf{\mu}$SR}
-\begin{frame}[fragile]
-	\frametitle{General principle of $\mathbf{\mu}$SR}
-	\begin{figure}[!htb]
-		\begin{center}
-			\includegraphics[height=6cm, keepaspectratio]{Bilder/musr_general_principle.png}%
-			\caption*{  \setlength{\baselineskip}{6pt}
-				{\tiny Dalmas de Réotier, Pierre (2010): \textit{Introduction to muon spin rotation and relaxation (\musr)} [Online]. Availible: \url{http://inac.cea.fr/Pisp/pierre.dalmas-de-				reotier/introduction_muSR.pdf}}
-			}%
-		\end{center}
-	\end{figure}          
-\end{frame}
-
-
-
-
-
-
-\begin{frame}
-	\frametitle{Coexistence of ferromagnetism and superconductivity in RuSr$_2$GdCu$_2$O$_8$}
+	\frametitle{Appendix: Estimating the Boundary Communication Time per Calculation Step}
 	
+	We want to estimate the communication time for the boundaries per calculation step of the hydro code. It is of special interest to us because we expect the timestep communication to remain constant for all calculation steps for a given number of processors used $P$. \\~\\
+	
+	We assume that during the communication phase of the code at each moment a processor communicates with exactly $1$ neighbour and the processors communicate exclusively with their neighbours.
+	For the linear execution, the number of neighbours $n_n$ each processor has is $n_n = 2$, while for the square execution it is $n_n=4$. We don't consider the processors with domain parts on the edge of the total domain (which are not communicated, instead a wall is created), since the total communication time will be determined by the slowest process, in this case the one with the most communications.\\~\\
+
+	Now we can express the communication time as $t_c = n_n \cdot (t_x + t_y)$ , where $t_x$ and $t_y$ are the communication times in $x$ resp. $y$ direction.
+	
+	$t_{x,y}$ can be expressed as a sum of two processes: the lattency $l$ that is needed to establish the communication and the actual transfer time. We express the actual transfer time as the product of the transfer time per unit that shall be sent, which will be $s / c$, the unit size divided by the transfer speed, and the number of units to be transferred. In the case of the hydro code, this number will be $ 2 \cdot 4 \cdot \Delta x = 8 \Delta x$ resp. $8 \Delta y$, because we need to send $2$ rows resp. columns, each containing $8$ conserved quantities, for the whole column resp. row. This gives us $t_{x} = l + 8 \tfrac{s}{c} \Delta y$ and $t_{y} = l + 8 \tfrac{s}{c} \Delta x$. Note that for the linear execution, $t_y = 0$ because there are no communications in the $y$ direction, and for the square execution: $\Delta x = \Delta y$.
+	
+	This gives us:
+	\begin{align*}
+		t_{c,lin} &= n_n \cdot (l + 8 \tfrac{s}{c}\Delta y) = 2 \cdot  (l + 8 \tfrac{s}{c}\Delta y)	& \text{for linear execution}\\
+		%
+		t_{c,sq} &= n_n \cdot \left(2l + 8 \tfrac{s}{c}(\Delta x + \Delta y)\right) = 8 \cdot (l + 8 \tfrac{s}{c}\Delta y )	& \text{for square execution}
+	\end{align*}
+	
+	In a weak scaling measurement, all the parameters remain constant for all $P$, the number of processors used. Thus we may conclude that the boundary communication time will remain constant in this case for all $P$. Instead, the timestep communication time will increase with higher $P$, slowing the code down and explaining why the computation time rises.
+	
+	With our assumptions, we see that in the case of weak scaling, $t_{c,sq} = 4 t_{c,lin}$ and we expect the square execution time to be higher for all $P$ than the linear execution time. Measurements showed (see page 5) that this is not the case. We can't explain that behaviour.\\~\\
+	
+	In a strong scaling measurement, where the total domain size is fixed for all $P$, the row and column lenght will vary with the number of processors used. We can say that for a linear execution $\Delta y = \tfrac{ny}{P}$, where $ny$ is the length of the total domain in $y$ direction. For a square execution, it is $\Delta y = \tfrac{ny}{\sqrt{P}}$ .
+	
+	This leaves us with:
 	\begin{columns}
-		\column{.55\textwidth}
-		\begin{itemize}
-			\item ferromagnetic phase is homogenous on a microscopic scale \vspace{10pt}
-			\item it accounts for most of the sample volume\vspace{10pt}
-			\item magnetic order is not significantly modified at the onset of superconductivity
-		\end{itemize}
-		\vspace{1cm}
-		\vfill
-		\setlength{\baselineskip}{6pt}      
-		\begin{tiny}
-			C. Bernhard, J. L. Tallon, Ch. Niedermayer, Th. Blasius, A. Golnik, E. Brücher, R. K. Kremer, D. R. Noakes, C. E. Stronach, and E. J. Ansaldo, Phys. Rev. \textbf{B} 59, 14099 (1999)
-		\end{tiny}
-		
-		\column{.45\textwidth}
-		\begin{figure}[htbp]
-			\centering
-			\includegraphics[width=\textwidth]{Bilder/ferromagnetism.png}%
-			\caption*{\setlength{\baselineskip}{5pt}{\tiny Time-resolved normalised muon-spin polarisation $^{P(t)}/_{P(t=0)}$ at temperatures $T = 5.3K < T_{c,sc}$ and at $T_{c, sc} < T = 28K < T_{c,m}$ . The large oscillatory component gives clear evidence for the presence of a magnetically ordered state.}}%
-		\end{figure}
+		\column{.5\textwidth}	
+			\begin{align*}
+				t_{c,lin} &= 2 \cdot (l + 8 \tfrac{s}{c}\tfrac{ny}{P}) 	\ \Rightarrow \tfrac{dt_{c,lin}}{dP} = - 16 \tfrac{s}{c}\tfrac{ny}{P^2}
+			\end{align*}
+		\column{.5\textwidth}	
+			\begin{align*}
+				t_{c,sq} &= 8 \cdot (l + 8 \tfrac{s}{c}\tfrac{ny}{\sqrt{P}} ) 	 \ \Rightarrow \tfrac{dt_{c,sq}}{dP} = - 32 \tfrac{s}{c}\tfrac{ny}{P^{3/2}} 
+			\end{align*}
 	\end{columns}
 	
-	\vfill
-	
-	
+	\vspace{1mm}
+	We see that the rate of change of the boundary communication time for a whole calculation step $t_c$ with respect to the number of processors used $P$ in strong scaling measurements will decrease both for the linear and the square execution, but it will decrease for the square execution much faster, causing better speedups.
 \end{frame}
 
 
 
+%########################################
+%########################################
+%########################################
+%########################################
+%########################################
+%########################################
 
-
-\begin{frame}
-	\begin{columns}
-		\column{.45\textwidth}
-		\begin{block}{\textbf{5 - 6 }}
-			$He$ core is homogenous (convective mixing). It will be nearly isothermal.\\~\\
-			
-			More and more $He$ is produced by shell burning, the core becomes more massive \\~\\			
-			
-			At some point, core cannot support envelope mass anymore: \\~\\
-			
-			
-			$\Rightarrow$ core contracts, envelope expands
-		\end{block}
-		\column{.65\textwidth}
-		\vspace{.77cm}
-		\pgfimage[width=\textwidth]{Bilder/Scan_Padmanabhan_cropped.pdf}
-	\end{columns}	
-	\begin{center}
-		\fillframe
-		\setlength{\baselineskip}{0pt}
-		{\tiny
-			T. Padmanabhan, "Theoretical Astrophysics Volume II: Stars and Stellar Systems". New York: Cambridge University Press, 2001.
-		}
-	\end{center}
-\end{frame}
 
 
 

@@ -59,10 +59,10 @@ if __name__ == "__main__":
     lw=[] # linear weak
     sw=[] # square weak
     for i in range(0,len(nlw)):
-        lw.append(tlw[i]/(nlw[i]*mtlw))
+        lw.append(mtlw/tlw[i])
 
     for j in range(0,len(nsw)):
-        sw.append(tsw[j]/(nsw[j]*mtsw))
+        sw.append(mtsw/tsw[j])
 
     fig1 = plt.figure(1, facecolor='white', figsize=(12,3))
     # enables switching between figures
@@ -82,10 +82,10 @@ if __name__ == "__main__":
 
     ax2 = plt.subplot(122)
     ax2.set_xlim([0.0, nsw[-1]+1])
-    ax2.semilogy(nlw, lw, 'r-', linewidth=0.1, label='linear execution', zorder=5)
-    ax2.semilogy(nlw, lw, 'ro', markersize=2.5, markeredgecolor='r', zorder=5)
-    ax2.semilogy(nsw, sw, 'b-', linewidth=0.1, label='square execution', zorder=5)
-    ax2.semilogy(nsw, sw, 'bo', markersize=2.5, markeredgecolor='b', zorder=5)
+    ax2.plot(nlw, lw, 'r-', linewidth=0.1, label='linear execution', zorder=5)
+    ax2.plot(nlw, lw, 'ro', markersize=2.5, markeredgecolor='r', zorder=5)
+    ax2.plot(nsw, sw, 'b-', linewidth=0.1, label='square execution', zorder=5)
+    ax2.plot(nsw, sw, 'bo', markersize=2.5, markeredgecolor='b', zorder=5)
     ax2.grid(color='lightgrey',linestyle='solid', linewidth=0.1, zorder=1 )
     ax2.legend(loc=0, prop={'size':9,'family':'serif'})
     ax2.set_title("Efficiency", size=13, family='serif')
