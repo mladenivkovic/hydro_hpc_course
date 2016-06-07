@@ -38,6 +38,8 @@ end subroutine writetoscreen
 !#####################################
 
 
+
+
 subroutine makedir(dirname)
 !create a directory.
     use hydro_parameters, only: myid
@@ -53,6 +55,7 @@ subroutine makedir(dirname)
 
     end if
 end subroutine makedir
+
 
 
 !#####################################
