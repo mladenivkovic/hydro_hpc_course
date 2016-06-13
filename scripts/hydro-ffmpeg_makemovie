@@ -16,10 +16,15 @@ else
 fi
 
 
+
+#/users/biernack/bin/ffmpeg -r 20 -pattern_type glob -i '*.png' -c:v h264 -pix_fmt yuv420p -vf scale=720:-2  -qp 0 "$filename"
+#^for dora
+
+/home/uzh/mivkov/programme/bin/ffmpeg -r 20 -pattern_type glob -i '*.png' -c:v libx264 -pix_fmt yuv420p -vf scale=720:-2  -qp 0 "$filename"
+
+#OLD AND USELESS
+
 #ffmpeg -framerate 20 -pattern_type glob -i '*.png' -vf "fps=30, scale=800:800" -pix_fmt yuv420p -shortest "$filename" 
 #ffmpeg -framerate 20 -pattern_type glob -i '*.png' -fmt yuv420p -shortest "$filename" 
 
 #ffmpeg -r 20 -f image2 -pattern_type glob -i '*.png' -f mp4 -q:v 0 -vcodec mpeg4 -r 20 "$filename"
-
-/users/biernack/bin/ffmpeg -r 20 -pattern_type glob -i '*.png' -c:v h264 -pix_fmt yuv420p -vf scale=720:-2  -qp 0 "$filename"
-
