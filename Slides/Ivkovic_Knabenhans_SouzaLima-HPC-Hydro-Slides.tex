@@ -1,0 +1,474 @@
+\documentclass[8pt]{beamer}
+
+
+\usepackage{lmodern} 		% Diese beiden packages sorgen für echte 
+\usepackage[T1]{fontenc}	% Umlaute.
+
+\usepackage{amssymb, amsmath, color, graphicx, float, setspace, tipa}
+\usepackage[utf8]{inputenc} 
+\usepackage[english]{babel}
+\usepackage[justification=centering]{caption}
+\addto\captionsenglish{\renewcommand{\figurename}{}} %Abbildungen nicht bzw. anders beschriften.
+
+
+%\usepackage[pdfpagelabels,pdfstartview = FitH,bookmarksopen = true,bookmarksnumbered = true,linkcolor = black,plainpages = false,hypertexnames = false,citecolor = black, breaklinks]{hyperref}
+%\usepackage{url}
+\usepackage{picins} 		%Gleittext um Grafik. Befehl: parpic. Vorlage siehe unten
+\usepackage{longtable} 		%Seitenübergreifende Tabelle. Vorlage siehe unten
+\newtheorem*{bem}{Bemerkung} % Neue Theorem-Umgebung: Bemerkung
+\newcommand{\fillframe}{\vskip0pt plus 1filll} 
+\newcommand{\musr}{$\mu$SR }
+
+
+
+%Spezialpakete Zeichnen
+\usepackage{tikz}
+\usepackage{fp}
+\usepackage{xcolor}
+% TikZ-Bibliotheken
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{decorations.shapes}
+\usetikzlibrary{decorations.text}
+
+
+%-----------------
+%BEAMER-SPEZIFISCH
+%-----------------
+
+\usetheme{default}
+% Verschiedene Varianten von usetheme, usecolortheme und usefonttheme kann man hier ausprobieren: http://deic.uab.es/~iblanes/beamer_gallery/
+
+% \usetheme{
+% 	AnnArbor | Antibes | Bergen |
+% 	Berkeley | Berlin | Boadilla |
+% 	boxes | CambridgeUS | Copenhagen |
+% 	Darmstadt | default | Dresden |
+% 	Frankfurt | Goettingen |Hannover |
+% 	Ilmenau | JuanLesPins | Luebeck |
+% 	Madrid | Malmoe | Marburg |
+% 	Montpellier | PaloAlto | Pittsburgh |
+% 	Rochester | Singapore | Szeged |
+% 	Warsaw
+% }
+%Interessant scheinen: Boadilla, boxes, CambridgeUS, default, (Goettingen), Hannover, Madrid, Montpellier, Pittsburgh, Rochester, Singapore, Szeged, 
+
+\usecolortheme{dove}
+% \usecolortheme{
+% 	albatross | beaver | beetle |
+% 	crane | default | dolphin |
+% 	dove | fly | lily | orchid |
+% 	rose |seagull | seahorse |
+% 	sidebartab | structure |
+% 	whale | wolverine
+% }
+
+\usefonttheme{structurebold}
+% 	default | professionalfonts | serif |
+% 	structurebold | structureitalicserif |
+% 	structuresmallcapsserif
+% }
+
+
+%\useinnertheme{
+% 	circles | default | inmargin |
+% 	rectangles | rounded
+% } Am besten sein lassen.
+
+
+% \useoutertheme{
+% 	default | infolines | miniframes |
+% 	shadow | sidebar | smoothbars |
+% 	smoothtree | split | tree
+% } Am besten sein lassen.
+
+
+
+\setbeamercovered{transparent} %Halbtransparente Overlays (was als nächstes Element auf der Folie gezeigt wird)
+\beamertemplatenavigationsymbolsempty % Entfernt Navigationssymbole unten
+%\setbeamertemplate{footline}[frame]  % Seitenzahlen
+    \setbeamertemplate{footline}{%
+    	\raisebox{5pt}{\makebox[\paperwidth]{\hfill\makebox[10pt]{\hyperlink{tableofcontents}{\scriptsize\insertframenumber}}}}}
+%
+% Margins
+\setbeamersize{text margin left=8pt,text margin right=7pt} 
+
+%
+% Making titles smaller
+\setbeamerfont{frametitle}{size=\normalsize}
+
+
+%---------------------
+%--Metainformationen--
+%---------------------
+\title{High Performance Computing 1b: Hydro Code}
+
+\author{
+	Mladen Ivkovic, Mischa Knabenhans, Rafael Souza Lima
+}
+\date{June 2016}
+
+
+% \title[Kurzform]{Vortrag zur Berechenbarkeit}
+%     Titel des Vortrages
+% \subtitle[Kurzform]{Untertitel}
+%     Untertitel
+% \author[M. Schulz]{Michael Schulz}
+%     Autor festlegen
+% \institute[IfI -- HU Berlin]{Institut für Informatik\\ Humboldt-Universität zu Berlin}
+%     Angabe des Institutes
+% \date[26.05.06]{26. Mai 2006}
+%     Datum der Präsentation, alternativ kann mittels \date{\today} auch das aktuelle Datum eingetragen werden.
+% \logo{\pgfimage[width=2cm,height=2cm]{hulogo}}
+%     Die Datei hulogo.pdf (bzw. hulogo.png, hulogo.jpg, hulogo.mps bei Verwendung von pdftex als Backend) als Logo auf allen Folien, hier mithilfe des Paketes pgf.
+% \titlegraphic{\includegraphics[width=2cm,height=2cm]{hulogo}}
+%     Die Datei hulogo.pdf (bzw. analog wie bei \logo auch entsprechendes Format) als Logo nur auf der Titelseite unter Verwendung des Paketes graphicx.
+
+
+%------------------------------------------------------------------
+%------------------------------------------------------------------
+%----------------VORLAGEN------------------------------------------
+%----------------VORLAGEN------------------------------------------
+%----------------VORLAGEN------------------------------------------
+%------------------------------------------------------------------
+
+%Bruch: \frac{}{}
+%Kleiner Bruch: \tfrac{}{}
+%Gleichungen: \begin{align}
+%Delta für partielle Ableitungen: \partial
+%Schönes Epsilon: \varepsilon
+
+%Strich: in align-Umgebung, \bar{} oder \overline{}
+%Seitenumbruch: \clearpage ; Besser als \newpage, da er floats zwingt, zuerst eingefügt zu werden.
+%Zu grosse Zeilenabstände wegen Formelzeichen? -> \vphantom{}, \smash{}
+%\newcommand{\BefehlName}[Anzahl_Parameter]{Definitiere neuen Befehl. Den ersten Parameter ruft man mit #1 ab, den zweiten mit #2 etc}
+
+%%FIGUR
+%\begin{figure}[htbp]
+%\centering
+%\includegraphics[width=15cm]{Bild1}%
+%\caption{Experimental set-up}%
+%\label{1}
+%\end{figure}
+
+%%BILD MIT PICINS NEBEN TEXT SETZEN
+%\piccaption{Caption\label{label}} 
+%\parpic[r]{\fbox{\includegraphics [width=5cm, keepaspectratio]{bild.png}}}
+%
+
+
+%% ZWEI BILDER NEBENEINANDER.
+%% Schau, dass die minipages insgesamt nie mehr als 1.0\textwidth haben.
+%% Um ein drittes oder viertes Bild einzufügen, ergänze einfach um weitere minipages.
+% \begin{figure}[!htb]
+% \centering
+%   \minipage{0.3\textwidth}
+%     \fbox{\includegraphics[height=2.5cm, keepaspectratio]{rsflipflop.png}}%
+%     \caption{RS-Flipflop}%
+%     \label{fig:rsflipflop}
+%   \endminipage\hspace{1cm}   
+% %
+%   \minipage{0.4\textwidth}
+%     \fbox{\includegraphics[height=2.5cm, keepaspectratio]{rsflipfloptakt.png}}%
+%     \caption{getaktetes RS-Flipflop}%
+%     \label{fig:rsflipfloptakt}
+%   \endminipage
+% \end{figure}
+
+
+
+%% TABELLEN
+%% 1) mit tabular
+%\begin{center}
+%\begin{tabular}[c]{|p{1cm}|p{3cm}|p{3cm}|p{3cm}|}
+%\hline
+%\multicolumn{2}{|c||}{Stromstärke 0.4A}	&	\multicolumn{2}{c|}{Stromstärke 0.6A}\\
+%\hline
+%$4T$ in s	&	$T'$		&	$4T$ in s	&	$T'$\\
+%\hline
+%7.1			&	1.775	&	7.1		& 	1.775\\
+%\hline
+%7.2			&	1.8		&	7.1		&	1.775\\
+%\hline
+%7.3			&	1.825	&	7.1		&	1.775\\
+%\hline
+%\end{tabular}
+%\end{center}
+%
+%% 2) Mit longtable
+%\begin{longtable}{p{3.5cm} p{11.5cm}}
+%  Blabla & Blabla\\ [2mm] <= Macht 2mm Abstand zwischen Zeilen
+%  %
+%  Blabla & Blabla \\ [2mm]
+%\end{longtable}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+\begin{document}
+
+% \begin{frame}[Overlay-Aktionen][Optionen]{Titel}{Untertitel}
+% 
+% Overlay-Aktionen
+%     Overlay-Aktionen setzen die Standard-Overlay-Aktionen aller Umgebungen innerhalb des Frames, welche Aktion-Spezifikationen erlauben. Dazu gehören u.a. \item bei Listen und Block-Umgebungen.
+% 
+%     <+->
+%         Sorgt dafür, dass die Elemente stückweise zum Vorschein kommen.
+% 
+% Optionen
+% 
+%     allowdisplaybreaks
+%         Sorgt durch Aufruf von \allowdisplaybreaks aus AMS-LaTeX für einen Seitenumbruch bei mehrzeiligen Formelumgebungen. Funktioniert nur im Zusammenhang mit der Option allowframebreaks
+%     allowframebreaks
+%         Passt der Inhalt nicht mehr auf ein Slide, wird er automatisch auf mehrere Slides verteilt. Allerdings ist somit kein Overlay mehr möglich.
+%     b,c,t
+%         Sorgt dafür, dass der Frame nach unten (b), zentriert (c) oder nach oben (t) ausgerichtet wird.
+%     fragile
+%         Wird für Quelltextumgebungen, z.B. verbatim, benötigt.
+%     label=name
+%         Legt einen Namen für ein Frame fest um es später mit \againframe{name} erneut aufrufen zu können.
+%     plain
+%         Unterdrückt die Anzeige der Überschrift, Fußzeile und Sidebar.
+%     squeeze
+%         Verkleinert die vertikalen Abstände so weit wie möglich um u.U. mehr auf der Folie unterbringen zu können.
+% 
+
+
+\begin{frame}{}
+	\titlepage
+\end{frame}
+\small
+
+\section{The Hydro Code}
+\begin{frame}
+	\frametitle{The Hydro Code}
+	
+	The hydro code is a hydrodynamical simulation which solves the conservative Euler equations
+	\begin{align*}
+		\frac{\partial \vec{U}}{\partial t} + \vec{\nabla} \vec{F} = 0
+	\end{align*}
+	for two dimensions, where $\vec{U} = (\rho, \rho u, \rho v, E) $ is the vector containing the conserved quantities density, momentum in $x$ and $y$ direction  ($u$ is the velocity in $x$ direction and $v$ the velocity in $y$ direction) and energy; and $\vec{F} = (\rho u, \rho u^2 + p, (E+p)u)$ resp. $\vec{F} = (\rho v, \rho v^2 + p, (E+p)v)$ the flux function, where $p$ is the pressure.\\~\\
+	
+	The simulation domain is rectangular, divided in square cells. The boundary conditions for the outermost cells are set to simulate a wall by mirroring the last two rows of cells before the wall. \\~\\
+	
+	It uses a Godunov's scheme with an exact Riemann solver, which yields the following numerical equation to be solved for each cell of the domain and for both dimensions separately:
+	\begin{align*}
+		U^{n+1}_{i,j} = U^n_{i,j} + \frac{\Delta t}{\Delta x} \left( F^{n + \frac{1}{2}}_{x, i + \frac{1}{2}} -  F^{n + \frac{1}{2}}_{x, i - \frac{1}{2}}\right)
+	\end{align*}
+	
+	At each calculating step, the Godunov's scheme is solved first in one direction, then for the other. The direction in which will be calculated first switches every calculating step, leading to more precise results.
+\end{frame}
+
+
+
+\section{Parallelisation Strategy}
+\begin{frame}
+	\frametitle{Parallelisation Strategy}
+	
+	The strategy used for the parallelisation of the code was to split the simulation domain between the processors, so each processor would only work on its own part of the domain, without having knowledge of what is happening in the domains of other processors. Before each step, the borders in the direction that is being calculated are communicated to neighbouring processors, creating a connection between the split domain parts.\\~\\
+	
+	In the initialisation phase of the code, first the best processor distribution for a given total number of processors and simulation domain size is calculated by choosing a combination of processors in $x$ and $y$ direction which minimises the communication time, considering the lattency and the message sizes.
+	
+	Then, the domain is split amongst those processors as evenly as possible. If the grid size in $x$ (resp. $y$) direction is not a multiple of the number of processors assigned to the $x$ (resp. $y$) direction, the remaining amount of cells of this integer division is distributed one per processor, starting with the last in $x$ (resp. $y$) direction, so that the processor ranked $0$ would have less work, since it's the one responsible for runtime output.
+	
+	After this step, every processor is "taught" who its neighbours are, or whether there is a wall next to it.\\~\\
+	
+	The advantage of this parallelisation is that any domain size can be calculated for any numbers of processors and the most expensive part of the work is done in parallel, but the processor distribution along a direction is not freely choosable, even though it may be enforced by setting the simulation domain sizes appropriately.
+\end{frame}
+
+
+
+
+
+
+
+
+
+\section{Bottlenecks}
+\begin{frame}
+	\frametitle{Bottlenecks}
+	We identified the bottlenecks of the code to be in the communication between the processors.\\~\\
+	
+	On one hand, on each calculation step, the maximal allowed time step, which ensures conservation of the conservative variables, must be recalculated by each processor. Then the minimal value of this maximal timestep must be communicated to all processors for the simulation to evolve at the same pace for each part of the domain. For this communication, we used the MPI$\_$ALLREDUCE routine. This is a blocking call and might waste processing time if processors have to wait for eachother often. To minimise waiting time, we tried to distribute the work as evenly as possible amongst the processors.\\~\\
+	
+	On the other hand, before each calculation step, the borders of the domain have to be communicated by each processor to each of its neighbours. For this, we used a MPI$\_$SENDRECV routine, which is a blocking call as well. Since we're sending a part of an array for every communication, the MPI routine will create an array temporary for each communication. This bottleneck might be optimised by using nonblocking calls and defining a new MPI structure type, but we couldn't realise those ideas due to time limitations.
+\end{frame}
+
+
+
+
+\section{Performance and Scaling: Weak Scaling}
+
+\begin{frame}
+	\frametitle{Performance and Scaling: Weak Scaling} 
+	
+\begin{columns}
+	\column{.6\textwidth}
+	
+	
+	Since our parallelisation allows domain splitting in both directions, we wanted to create a comparison between a strictly "linear execution", where the domain is split only in one direction, and a "square execution", where the number of processors assigned to each direction is equal. 
+	
+	
+	\column{.35\textwidth}
+	\begin{tikzpicture}[scale=0.4, transform shape]
+	\draw[step=1cm,gray,very thin] (0, 0) grid (3, 3);
+	\draw[line width=1.3pt] (0,0) rectangle (3,3);
+	%
+	\draw[step=1cm,gray,very thin] (4, 1) grid (8, 2);
+	\draw[line width=1.3pt] (4,1) rectangle (8,2);
+	%
+	\node[scale=1.3] at (0.5, 0.5) {$P0$};
+	\node[scale=1.3] at (0.5, 1.5) {$P3$};
+	\node[scale=1.3] at (0.5, 2.5) {$P6$};
+	\node[scale=1.3] at (1.5, 0.5) {$P1$};
+	\node[scale=1.3] at (1.5, 1.5) {$P4$};
+	\node[scale=1.3] at (1.5, 2.5) {$P7$};
+	\node[scale=1.3] at (2.5, 0.5) {$P2$};
+	\node[scale=1.3] at (2.5, 1.5) {$P5$};
+	\node[scale=1.3] at (2.5, 2.5) {$P8$};
+	%
+	\node[scale=1.3] at (4.5, 1.5) {$P0$};
+	\node[scale=1.3] at (5.5, 1.5) {$P1$};
+	\node[scale=1.3] at (6.5, 1.5) {$P2$};
+	\node[scale=1.3] at (7.5, 1.5) {$P3$};
+	%
+	\node[text width = 4cm, align=center, scale=1.15] at (1.5, -0.6) {Processor distribution for a "square execution"};
+	\node[text width = 4cm, align=center, scale=1.15] at (6, -0.6) {Processor distribution for a "linear execution"};
+	\end{tikzpicture}
+
+\end{columns}
+	
+
+%
+	\begin{figure}[H!]
+		\begin{center}
+		\pgfimage[width=.9\textwidth]{weak_scaling.pdf}
+		\caption*{$P$: Number of processors used. $t_P$ : Measured execution time for $P$ processors.}	
+		\end{center}
+	\end{figure}
+%
+	
+	
+	For the weak scaling measurements, all processors were assigned the same workload of $200 \times 200$ cells for $100$ calculation steps, so the total number of cells increases with the number of processors $P$ ranging from $1$ to $900$.\\~\\
+	
+	
+	Surprisingly the square execution requires less computation time, even though a square processor distribution requires more communications between processors, while the amount of communicated data is constant.
+	
+	Since the number of cells per processor remain constant for all $P$, we may assume that the boundary communication time remains constant for all $P$ as well (at least for $P \geq 3$, when there is at least $1$ processor with the maximal amount of neighbours.) Therefore, with increasing $P$, the timestep communication (which uses the MPI$\_$ALLREDUCE routine) should dominate the efficiency loss.
+\end{frame}
+
+
+\section{Performance and Scaling: Strong Scaling}
+
+\begin{frame}
+	\frametitle{Performance and Scaling: Strong Scaling}
+	
+	\begin{figure}[H!]
+		\pgfimage[width=.9\textwidth]{strong_scaling.pdf}
+		\caption*{$P$: Number of processors used. $t_P$ : Measured execution time for $P$ processors.}	
+	\end{figure}
+	
+	For the strong scaling performance test, a fixed grid size was chosen and calculated for $100$ calculation steps and computed with a different amount of processors $P$ ranging from $1$ to $900$.
+	
+	The grid size for the linear execution was $45360 \times 200$ and for the square execution it was $16200 \times 16200$. Please note that therefore the computation times in the plot above cannot be compared directly.\\~\\
+	
+	
+	
+	The square execution shows much better scaling than the linear execution. This can be explained by looking at how the boundary communication time changes with the number of processors used: while we may assume the total lattency effects to be constant for all numbers of processors used, the transfer time ("talking time") reduces with the number of  
+	processors for a fixed total size grid because less and less cells need to be communicated between two processors. It can be shown (see appendix) that the rate of change of the boundary communication time for a whole calculation step $t_c$ with respect to the number of processors used $P$ is $\frac{dt_{c, lin}}{dP} \propto -P^{-2}$ for the linear execution and $\frac{dt_{c, sq}}{dP} \propto -P^{-3/2}$ for the square execution. So the communication time for the square execution will decrease faster with increasing number of used processors, leading to the better scaling property for the square execution.
+
+\end{frame}
+
+
+
+\begin{frame}
+	\frametitle{High Quality Output}
+	Below are three high quality outputs at calculation steps $800`000$, $1`000`000$ and $1`200`000$ for the gridsize $1600 \times 1600$, calculated on $64$ processors.
+	\begin{columns}
+		\column{.334\textwidth}
+		\begin{figure}
+			\begin{center}
+				\pgfimage[width=1.0\textwidth]{output_00800.png}
+				\caption{Output step $800`000$}
+			\end{center}
+		\end{figure}
+		\column{.334\textwidth}
+		\begin{figure}
+			\begin{center}
+				\pgfimage[width=1.0\textwidth]{output_01000.png}
+				\caption{Output step $1`000`000$}
+			\end{center}
+		\end{figure}
+		\column{.334\textwidth}
+		\begin{figure}
+			\begin{center}
+				\pgfimage[width=1.0\textwidth]{output_01200.png}
+				\caption{Output step $1`200`000$}
+			\end{center}
+		\end{figure}
+	\end{columns}
+\end{frame}
+
+\tiny
+\begin{frame}
+	\frametitle{Appendix: Estimating the Boundary Communication Time per Calculation Step}
+	
+	We want to estimate the communication time for the boundaries per calculation step of the hydro code. It is of special interest to us because we expect the timestep communication to remain constant for all calculation steps for a given number of processors used $P$. \\~\\
+	
+	We assume that during the communication phase of the code at each moment a processor communicates with exactly $1$ neighbour and the processors communicate exclusively with their neighbours.
+	For the linear execution, the number of neighbours $n_n$ each processor has is $n_n = 2$, while for the square execution it is $n_n=4$. We don't consider the processors with domain parts on the edge of the total domain (which are not communicated, instead a wall is created), since the total communication time will be determined by the slowest process, in this case the one with the most communications.\\~\\
+
+	Now we can express the communication time as $t_c = n_n \cdot (t_x + t_y)$ , where $t_x$ and $t_y$ are the communication times in $x$ resp. $y$ direction.
+	
+	$t_{x,y}$ can be expressed as a sum of two processes: the lattency $l$ that is needed to establish the communication and the actual transfer time. We express the actual transfer time as the product of the transfer time per unit that shall be sent, which will be $s / c$, the unit size divided by the transfer speed, and the number of units to be transferred. In the case of the hydro code, this number will be $ 2 \cdot 4 \cdot \Delta x = 8 \Delta x$ resp. $8 \Delta y$, because we need to send $2$ rows resp. columns, each containing $8$ conserved quantities, for the whole column resp. row. This gives us $t_{x} = l + 8 \tfrac{s}{c} \Delta y$ and $t_{y} = l + 8 \tfrac{s}{c} \Delta x$. Note that for the linear execution, $t_y = 0$ because there are no communications in the $y$ direction, and for the square execution: $\Delta x = \Delta y$.
+	
+	This gives us:
+	\begin{align*}
+		t_{c,lin} &= n_n \cdot (l + 8 \tfrac{s}{c}\Delta y) = 2 \cdot  (l + 8 \tfrac{s}{c}\Delta y)	& \text{for linear execution}\\
+		%
+		t_{c,sq} &= n_n \cdot \left(2l + 8 \tfrac{s}{c}(\Delta x + \Delta y)\right) = 8 \cdot (l + 8 \tfrac{s}{c}\Delta y )	& \text{for square execution}
+	\end{align*}
+	
+	In a weak scaling measurement, all the parameters remain constant for all $P$, the number of processors used. Thus we may conclude that the boundary communication time will remain constant in this case for all $P$. Instead, the timestep communication time will increase with higher $P$, slowing the code down and explaining why the computation time rises.
+	
+	With our assumptions, we see that in the case of weak scaling, $t_{c,sq} = 4 t_{c,lin}$ and we expect the square execution time to be higher for all $P$ than the linear execution time. Measurements showed (see page 5) that this is not the case. We can't explain that behaviour.\\~\\
+	
+	In a strong scaling measurement, where the total domain size is fixed for all $P$, the row and column lenght will vary with the number of processors used. We can say that for a linear execution $\Delta y = \tfrac{ny}{P}$, where $ny$ is the length of the total domain in $y$ direction. For a square execution, it is $\Delta y = \tfrac{ny}{\sqrt{P}}$ .
+	
+	This leaves us with:
+	\begin{columns}
+		\column{.5\textwidth}	
+			\begin{align*}
+				t_{c,lin} &= 2 \cdot (l + 8 \tfrac{s}{c}\tfrac{ny}{P}) 	\ \Rightarrow \tfrac{dt_{c,lin}}{dP} = - 16 \tfrac{s}{c}\tfrac{ny}{P^2}
+			\end{align*}
+		\column{.5\textwidth}	
+			\begin{align*}
+				t_{c,sq} &= 8 \cdot (l + 8 \tfrac{s}{c}\tfrac{ny}{\sqrt{P}} ) 	 \ \Rightarrow \tfrac{dt_{c,sq}}{dP} = - 32 \tfrac{s}{c}\tfrac{ny}{P^{3/2}} 
+			\end{align*}
+	\end{columns}
+	
+	\vspace{1mm}
+	We see that the rate of change of the boundary communication time for a whole calculation step $t_c$ with respect to the number of processors used $P$ in strong scaling measurements will decrease both for the linear and the square execution, but it will decrease for the square execution much faster, causing better speedups.
+\end{frame}
+
+
+
+%########################################
+%########################################
+%########################################
+%########################################
+%########################################
+%########################################
+
+
+
+
+
+\end{document}

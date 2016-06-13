@@ -1,0 +1,15 @@
+What has been done so far:
+
+
+2016-05-08 	Implemented my own module to contain my subroutines
+2016-05-09 	The output will now be written to a subdirectory that
+			is called "hydro_output"
+
+
+TO DO:
+	- Parallelisation:
+		- initialize/finalize MPI
+		- change makefile to compile with MPI
+		- split domain, set boundaries
+		- timestep
+		- handle parallel output

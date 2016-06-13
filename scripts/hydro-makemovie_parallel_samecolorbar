@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# creates a movie of HYDRO output files named movie.mp4
+# execute in the directory where the outputs are
+# Same as hydro_makemovie_parallel_dry, but will take two more 
+# cmd line args: the lower and upper limit for the colorbar of 
+# the plots, so all the .png files will have the same scale.
+# Usage:
+# makemovie_parallel_samecolorbar <lowerlimit> <upperlimit>    
+# If <lowerlimit> is 0.0, it will be set to 1e-4 because the 
+# script uses a LogNorm, which can't take 0.0 as an input.
+
+
+# Get limits for simulation as cmd line arg, 
+# or complain if you don't.
+
+if [ "$#" -gt 2 ] || [ "$#" == 0 ] ; then
+    echo "Specify lower bar limit and upper bar limit as cmd line args:"
+    echo "makemovie_parallel_barlimits <lowerlimit> <upperlimit>"
+    exit
+else
+    lowerlimit="$1"
+    upperlimit="$2"
+    echo "Limits are: " $lowerlimit " and " $upperlimit
+fi
+
+
+#check if subdir "picoutput" exists. if not, create it.
+if [ -d "picoutput_parallel_samecolorbar" ]; then
+    echo "Directory picoutput_parallel_samecolorbar already exists."
+else
+    mkdir -p picoutput_parallel_samecolorbar
+    echo "Made new dir picoutput_parallel_samecolorbar"
+fi
+
+
+echo "Creating png files"
+for i in output_*.00001; do
+    name=${i:0:12}
+    hydropic_movie_parallel_samecolorbar "$lowerlimit" "$upperlimit" "$name"*
+    #echo ./"$name"*
+done
+echo "png files created"
+
+
+moviefilename="../movie_constant_colorbar.mp4"
+
+#create movie out of png
+echo "creating movie"
+cd picoutput_parallel_samecolorbar
+hydro-ffmpeg_makemovie $moviefilename
+cd ..
+
+echo "done"
+

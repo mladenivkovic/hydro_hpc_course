@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# creates a movie of HYDRO output files named movie.mp4
+# execute in the directory where the outputs are
+
+
+#check if subdir "picoutput" exists. if not, create it.
+
+if [ -d "picoutput" ]; then
+    echo "Directory picoutput already exists."
+else
+    mkdir -p picoutput
+    echo "made new dir picoutput"
+fi
+
+# create png out of fortran output
+for i in output_*; do
+    hydropic_movie_serial $i
+done
+
+#create movie out of png
+cd picoutput
+hydro-ffmpeg_makemovie
+cd ..
+
+echo "done"
+

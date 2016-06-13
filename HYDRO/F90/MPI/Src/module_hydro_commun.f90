@@ -17,6 +17,7 @@ end module hydro_precision
 module hydro_commons
   use hydro_precision
   integer(kind=prec_int) :: imin,imax,jmin,jmax
+  integer(kind=prec_int), dimension(:), allocatable :: imin_global, imax_global, jmin_global, jmax_global
   real(kind=prec_real),allocatable,dimension(:,:,:) :: uold
   real(kind=prec_real)   :: t=0.
   integer(kind=prec_int) :: nstep=0
@@ -46,6 +47,23 @@ module hydro_parameters
   integer(kind=prec_int) :: noutput=100
   integer(kind=prec_int) :: nstepmax=1000000
   logical                :: on_output=.true.
+
+
+  !!!
+  !!!
+  !!! MPI - stuff
+  integer :: exitcode
+  integer :: myid
+  integer :: nproc
+  integer :: nproc_x=1, nproc_y=1 !processors assigned to each axis
+  !calculating least communication
+  real :: lattency = 0.001
+  real :: real_datasize=64.0
+  real :: communication_speed=100000.0
+  ! processor map
+  integer :: leftofme, rightofme, aboveme, belowme
+  integer :: wall=0
+
 end module hydro_parameters
 
 module hydro_const

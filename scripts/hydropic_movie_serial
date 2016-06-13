@@ -1,0 +1,65 @@
+#!/home/ics/volker/Anaconda/bin/python
+# ^ for python on zbox
+
+#/users/biernack/Enthought/Canopy_64bit/User/bin/python 
+# ^ for python on dora/ela
+
+#/usr/bin/python # use this as shebang if on local machine
+
+# This script is made to be executer by the makemovie script.
+# It makes pngs out of fortran output.
+# To be used via a bash script.
+# creates a .png file with the same name in the same directory.
+
+
+
+import fortranfile
+import numpy
+from os import getcwd, path, mkdir #get currend work dir, check if dir exists, make new dir
+from sys import argv # command line arguments
+from matplotlib import use
+use('Agg') #don't show anything unless I ask you to. So no need to get graphical all over ssh.
+from matplotlib import pyplot
+from mpl_toolkits.axes_grid1 import make_axes_locatable, axes_size
+
+map_file = str(argv[1])
+print "input file is: ", map_file
+#map_file = '/scratch/daint/biernack/hpc1b/jet/output_00010.00000'
+
+# read image data
+print "reading image file"
+f = fortranfile.FortranFile(map_file)
+[t, gamma] = f.readReals()
+[nx,ny,nvar,nstep] = f.readInts()
+dat = f.readReals()
+f.close()
+
+dat = numpy.array(dat)
+dat = dat.reshape(nvar,ny,nx)
+
+fig = pyplot.figure(facecolor='white', figsize=(5,5), dpi=150)
+ax = fig.add_subplot(111, aspect='equal')
+
+print "plotting"
+im=ax.imshow(dat[0,:,:],interpolation='none', vmin=0.0, vmax=10.0, cmap='Blues_r')
+
+# Make colorbar same height as plot
+divider = make_axes_locatable(ax)
+cax = divider.append_axes("right", size="5%", pad=0.05)
+fig.colorbar(im, cax=cax)
+
+pyplot.tight_layout()
+
+workdir = str(getcwd())
+
+
+outputfilename = 'picoutput/'+map_file
+extension = 'png'
+fig_path = workdir+'/'+outputfilename+'.'+extension
+
+print "saving ", fig_path
+pyplot.savefig(fig_path, format=extension, facecolor=fig.get_facecolor(), transparent=False, dpi=150)
+pyplot.close()
+
+print "done"
+

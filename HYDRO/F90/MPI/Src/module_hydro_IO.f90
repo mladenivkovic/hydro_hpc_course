@@ -10,13 +10,15 @@ module hydro_IO
 contains
 
 subroutine read_params
-  use hydro_parameters
+  use hydro_parameters !contains MPI vars
   use mladen
+  use mpi
   implicit none
 
   ! Local variables
   integer(kind=prec_int) :: narg,iargc
   character(LEN=80) :: infile
+  character(LEN=80) :: message
 
   ! Namelists
   namelist/run/nstepmax,tend,noutput,on_output
@@ -27,8 +29,8 @@ subroutine read_params
 
   narg = iargc()
   IF(narg .NE. 1)THEN
-     write(*,*)'You should type: a.out input.nml'
-     write(*,*)'File input.nml should contain a parameter namelist'
+     print*, ' You should type: a.out input.nml'
+     print*, ' File input.nml should contain a parameter namelist'
      STOP
   END IF
   CALL getarg(1,infile)
@@ -39,30 +41,48 @@ subroutine read_params
   close(1)
   
 
+  !! INITIATE MPI
+  call MPI_INIT(exitcode)
+  call MPI_COMM_SIZE(MPI_COMM_WORLD, nproc, exitcode)
+  call MPI_COMM_RANK(MPI_COMM_WORLD, myid, exitcode)
+  myid = myid+1
+
+if (on_output) then
+  call writetoscreen('#################################')
+  call writetoscreen('######      HYDRO CODE     ######')
+  call writetoscreen('#################################')
+
   !other init stuff
   call makedir('hydro_output')
+  call MPI_BARRIER(MPI_COMM_WORLD, exitcode)
+  ! so that no file will start writing into a directory that doesn't exist yet
+end if
+
 end subroutine read_params
 
 
 subroutine output
   use hydro_commons
   use hydro_parameters
+  use mladen
   implicit none
 
   ! Local variables
   character(LEN=80) :: filename
   character(LEN=5)  :: char,charpe
-  integer(kind=prec_int) :: nout,MYPE=0
+  integer(kind=prec_int) :: nout
+  character(len=100) :: message
 
   nout=nstep/noutput
   call title(nout,char)
-  call title(MYPE,charpe)
+  call title(myid,charpe)
   filename='hydro_output/output_'//TRIM(char)//'.'//TRIM(charpe)
   open(10,file=filename,form='unformatted')
   rewind(10)
-  print*,'Outputting array of size=',nx,ny,nvar
+  !write(*, *) 'Outputting array of size=',imax-imin-3,jmax-jmin-3,nvar
+  call writetoscreen("Writing output.")
   write(10)real(t,kind=prec_output),real(gamma,kind=prec_output)
-  write(10)nx,ny,nvar,nstep
+  write(10) imax-imin-3,jmax-jmin-3,nvar,nstep
   write(10)real(uold(imin+2:imax-2,jmin+2:jmax-2,1:nvar),kind=prec_output)
   close(10)
 

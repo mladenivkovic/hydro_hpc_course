@@ -21,6 +21,7 @@ subroutine make_boundary(idim)
   use hydro_commons
   use hydro_const
   use hydro_parameters
+  use mladen ! communicate_boundaries
   implicit none
 
   ! Dummy arguments
@@ -31,63 +32,21 @@ subroutine make_boundary(idim)
 !!$ integer(kind=prec_int) :: ijet
 !!$ real(kind=prec_real) :: djet,ujet,pjet
 
+
+
   if(idim==1)then
-     
-     ! Left boundary
-     do ivar=1,nvar
-        do i=1,2           
-           sign=1.0
-           if(boundary_left==1)then
-              i0=5-i
-              if(ivar==IU)sign=-1.0
-           else if(boundary_left==2)then
-              i0=3
-           else
-              i0=nx+i
-           end if
-           do j=jmin+2,jmax-2
-              uold(i,j,ivar)=uold(i0,j,ivar)*sign
-           end do
-        end do
-     end do
 
-     ! Right boundary
-     do ivar=1,nvar
-        do i=nx+3,nx+4
-           sign=1.0
-           if(boundary_right==1)then
-              i0=2*nx+5-i
-              if(ivar==IU)sign=-1.0
-           else if(boundary_right==2)then
-              i0=nx+2
-           else
-              i0=i-nx
-           end if
-           do j=jmin+2,jmax-2
-              uold(i,j,ivar)=uold(i0,j,ivar)*sign
-           end do
-        end do
-     end do
-
+    call communicate_boundaries(idim)
+    if(leftofme==wall) call makewall(1) !make left wall
+    if (rightofme==wall) call makewall(2) !make right wall
+    
   else
 
-     ! Lower boundary
-     do ivar=1,nvar
-        do j=1,2           
-           sign=1.0
-           if(boundary_down==1)then
-              j0=5-j
-              if(ivar==IV)sign=-1.0
-           else if(boundary_down==2)then
-              j0=3
-           else
-              j0=ny+j
-           end if
-           do i=imin+2,imax-2
-              uold(i,j,ivar)=uold(i,j0,ivar)*sign
-           end do
-        end do
-     end do
+    call communicate_boundaries(idim) 
+    if (belowme==wall) call makewall(4) !make lower wall
+    if (aboveme==wall) call makewall(3) !make upper wall
+
+    
 
 !!$        djet=1.0
 !!$        ujet=300.
@@ -103,24 +62,6 @@ subroutine make_boundary(idim)
 !!$              end do
 !!$           end do
 !!$        end do
-
-     ! Upper boundary
-     do ivar=1,nvar
-        do j=ny+3,ny+4
-           sign=1.0
-           if(boundary_up==1)then
-              j0=2*ny+5-j
-              if(ivar==IV)sign=-1.0
-           else if(boundary_up==2)then
-              j0=ny+2
-           else
-              j0=j-ny
-           end if
-           do i=imin+2,imax-2
-              uold(i,j,ivar)=uold(i,j0,ivar)*sign
-           end do
-        end do
-     end do
 
   end if
 end subroutine make_boundary

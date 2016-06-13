@@ -17,6 +17,5 @@ dat = dat.reshape(nvar,ny,nx)
 fig = pyplot.figure()
 ax = fig.add_subplot(1,1,1)
 
-ax.imshow(dat[0,:,:],interpolation='nearest')
 
 pyplot.show()
