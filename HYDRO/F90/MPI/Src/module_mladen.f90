@@ -240,11 +240,11 @@ end subroutine makewall
 
 
 
-subroutine distribute_processors(nproc_x, nproc_y)
+subroutine distribute_processors(nprocx, nprocy)
     !decides how many processors are to be used in x and y direction.
     use hydro_parameters
     implicit none
-    integer, intent(out) :: nproc_x, nproc_y
+    integer, intent(out) :: nprocx, nprocy
     real, dimension(:), allocatable:: calcarray
     integer, dimension(:,:), allocatable :: procarray
     integer :: i, ind
@@ -275,8 +275,8 @@ subroutine distribute_processors(nproc_x, nproc_y)
         end if
     end do
 
-    nproc_x=procarray(ind,1)
-    nproc_y=procarray(ind,2)
+    nprocx=procarray(ind,1)
+    nprocy=procarray(ind,2)
 
 end subroutine distribute_processors
 

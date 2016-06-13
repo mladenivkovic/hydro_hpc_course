@@ -3,7 +3,7 @@
 #--------------------------------------
 
 #don't forget to load the correct modules first!
-include ../../../Arch/make_dora
+include ../../../Arch/make_intel
 
 # Sources directories
 #--------------------
